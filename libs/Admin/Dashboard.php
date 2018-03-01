@@ -18,8 +18,8 @@ if ( !trait_exists('Companion_Dashboard') ){
 		}
 
 		public function dashboard_nebula_github(){
-			$client_id = ''; //get this from nebula options
-			$client_secret = ''; //get this from nebula options
+			$client_id = ''; //get this from Advanced nebula options
+			$client_secret = ''; //get this from Advanced nebula options
 			if ( !empty($client_id) && !empty($client_secret) ){
 				$url = add_query_arg(array(
 					'client_id' => $client_id,
@@ -28,11 +28,11 @@ if ( !trait_exists('Companion_Dashboard') ){
 			}
 
 			$github_issues_json = get_transient('nebula_github_issues');
-			if ( empty($github_issues_json) || 1==1 ){ //REMOVE FORCE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			if ( empty($github_issues_json) || nebula()->is_debug() ){
 				$repo_name = str_replace('https://github.com/', '', nebula()->get_option('github_url'));
 				$response = nebula()->remote_get('https://api.github.com/repos/' . $repo_name . '/issues?sort=updated');
 
-				//$response = nebula()->remote_get('https://api.github.com/repos/PinckneyHugoGroup/Dwyer-Strategy/issues'); //delete this
+				//$response = nebula()->remote_get('https://api.github.com/repos/PinckneyHugoGroup/Dwyer-Strategy/issues?sort=updated'); //delete this
 
 				if ( is_wp_error($response) ){
 			        echo '<p>There was an error retrieving the Github issues...</p>';
@@ -55,18 +55,13 @@ if ( !trait_exists('Companion_Dashboard') ){
 
 			echo '<ul>';
 			foreach ( $issues as $issue ){
-				$date_time = strtotime($issue->created_at);
-				$format = 'F j, Y';
-				$icon = 'fa-calendar';
-				if ( date('Y-m-d', $date_time) === date('Y-m-d') ){
-					$format = 'g:ia';
-					$icon = 'fa-clock';
-				}
+				$date_time = strtotime($issue->updated_at);
+				$icon = ( date('Y-m-d', $date_time) === date('Y-m-d') )? 'fa-clock' : 'fa-calendar';
 
 				echo '<li>
 					<p>
 						<a href="' . $issue->html_url . '" target="_blank">' . $issue->title . '</a><br />
-						<small><i class="far fa-fw ' . $icon . '"></i> ' . date($format, strtotime($issue->created_at)) . ' by ' . $issue->user->login . '</small>
+						<small title="' . date('F j, Y @ g:ia', $date_time) . '"><i class="far fa-fw ' . $icon . '"></i> ' . human_time_diff($date_time) . ' ago</small>
 					</p>
 				</li>';
 

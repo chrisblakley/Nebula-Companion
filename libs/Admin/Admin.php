@@ -11,19 +11,13 @@ if ( !trait_exists('Companion_Admin') ){
 		public function hooks(){
 			global $pagenow;
 
-			if ( is_admin() ){ //@todo: use nebula()->is_admin_page() here
+			if ( nebula()->is_admin_page() ){
 				$this->Companion_DashboardHooks(); //Register Dashboard hooks
 
-				//add_filter('admin_body_class', array($this, 'admin_body_classes'));
-				//add_action('upgrader_process_complete', array($this, 'theme_update_automation'), 10, 2); //Action 'upgrader_post_install' also exists.
-				//add_action('load-post-new.php', array($this, 'post_meta_boxes_setup'));
+				//add_action() here for admin pages
 			}
 
-			//Disable auto curly quotes (smart quotes)
-			//remove_filter('the_content', 'wptexturize');
-			//remove_filter('the_excerpt', 'wptexturize');
-			//remove_filter('comment_text', 'wptexturize');
-			//add_filter('run_wptexturize', '__return_false');
+			//add_action() for all stuff here
 		}
 
 		//Describe it

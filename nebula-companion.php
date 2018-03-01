@@ -9,12 +9,6 @@ Author URI: https://gearside.com/nebula
 */
 
 if ( !class_exists('Nebula_Companion') ){
-
-
-	//@todo: how to wait for Nebula class itself to exist first (so we can use nebula functions)?
-
-
-
 	//Require Nebula libraries
 	require_once plugin_dir_path(__FILE__) . '/libs/Options/Options.php';
 	require_once plugin_dir_path(__FILE__) . '/libs/Utilities/Utilities.php';
@@ -57,7 +51,7 @@ if ( !class_exists('Nebula_Companion') ){
 			$this->Companion_UtilitiesHooks(); //Register Utilities hooks
 			$this->Companion_FunctionsHooks(); //Register Functions hooks
 
-			if ( is_admin() || is_admin_bar_showing() ){ //@todo: use nebula()->is_admin_page() here
+			if ( nebula()->is_admin_page() || is_admin_bar_showing() ){
 				$this->Companion_AdminHooks(); // Register Admin hooks
 			}
 		}
@@ -96,18 +90,8 @@ if ( class_exists('Nebula_Companion') ){
 	require_once(ABSPATH . 'wp-admin/includes/file.php');
 }
 
-
-
-//@todo: Make "Advanced" Nebula Options tab
-
-
-//@todo: Move Tor detection here and add it to Advanced options
-
-
-
-
-//The main function responsible for returning Nebula instance
-add_action('init', 'nebula_companion', 1);
+//The main function responsible for returning Nebula_Companion instance
+add_action('init', 'nebula_companion', 2); //Priority of 2 to make sure nebula() is initialized first
 function nebula_companion(){
 	return Nebula_Companion::instance();
 }
