@@ -1,6 +1,6 @@
 <?php
 
-//if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
+if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
 if ( !trait_exists('Companion_Utilities') ){
 	//require_once plugin_dir_path(__FILE__) . '/Device.php';
