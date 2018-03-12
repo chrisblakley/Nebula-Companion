@@ -11,13 +11,14 @@ if ( !trait_exists('Companion_Options') ){
 			add_action('nebula_options_interface_additional_panes', array($this, 'add_advanced_option_pane'));
 		}
 
-
-
-
+		//Add Nebula Companion options
 		public function companion_default_options($default_options){
 			$default_options['example1'] = '';
 			$default_options['example2'] = 0;
 
+			$default_options['ip_geolocation'] = 0;
+			$default_options['weather'] = 0;
+			$default_options['prototype_mode'] = 0;
 			$default_options['check_tor'] = 0;
 			return $default_options;
 		}

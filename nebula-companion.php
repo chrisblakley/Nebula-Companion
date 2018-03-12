@@ -14,12 +14,14 @@ if ( !class_exists('Nebula_Companion') ){
 	require_once plugin_dir_path(__FILE__) . '/libs/Utilities/Utilities.php';
 	require_once plugin_dir_path(__FILE__) . '/libs/Functions.php';
 	require_once plugin_dir_path(__FILE__) . '/libs/Admin/Admin.php';
+	require_once plugin_dir_path(__FILE__) . '/libs/Prototyping.php';
 
 	class Nebula_Companion {
 		use Companion_Options { Companion_Options::hooks as Companion_OptionsHooks; }
 		use Companion_Utilities { Companion_Utilities::hooks as Companion_UtilitiesHooks; }
 		use Companion_Functions { Companion_Functions::hooks as Companion_FunctionsHooks; }
 		use Companion_Admin { Companion_Admin::hooks as Companion_AdminHooks; }
+		use Companion_Prototyping { Companion_Prototyping::hooks as Companion_PrototypingHooks; }
 
 		private static $instance;
 
@@ -53,6 +55,10 @@ if ( !class_exists('Nebula_Companion') ){
 
 			if ( nebula()->is_admin_page() || is_admin_bar_showing() ){
 				$this->Companion_AdminHooks(); // Register Admin hooks
+			}
+
+			if ( nebula()->get_option('prototype_mode') ){
+				$this->PrototypingHooks(); //Register Prototyping hooks
 			}
 		}
 

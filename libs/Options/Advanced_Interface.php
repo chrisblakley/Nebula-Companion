@@ -38,14 +38,76 @@
 	<div class="row">
 		<div class="col-xl-8">
 			<div class="option-group">
-				<h3>Stuff</h3>
+				<h3>Detection</h3>
+				<div class="form-group">
+					<input type="checkbox" name="nebula_options[ip_geolocation]" id="ip_geolocation" value="1" <?php checked('1', !empty($nebula_options['ip_geolocation'])); ?> /><label for="ip_geolocation">IP Geolocation</label>
+					<p class="nebula-help-text short-help form-text text-muted">Lookup the country, region, and city of the user based on their IP address. (Default: <?php echo nebula()->user_friendly_default('ip_geolocation'); ?>)</p>
+					<p class="option-keywords">location remote resource minor page speed impact</p>
+				</div>
+
+				<div class="form-group">
+					<input type="checkbox" name="nebula_options[weather]" id="weather" value="1" <?php checked('1', !empty($nebula_options['weather'])); ?> /><label for="weather">Weather Detection</label>
+					<p class="nebula-help-text short-help form-text text-muted">Lookup weather conditions for locations. (Default: <?php echo nebula()->user_friendly_default('weather'); ?>)</p>
+					<p class="nebula-help-text more-help form-text text-muted">Can be used for changing content as well as analytics.</p>
+					<p class="option-keywords">location remote resource major page speed impact</p>
+				</div>
+
 				<div class="form-group">
 					<input type="checkbox" name="nebula_options[check_tor]" id="check_tor" value="1" <?php checked('1', !empty($nebula_options['check_tor'])); ?> /><label for="check_tor">Check for Tor browser</label>
-					<p class="nebula-help-text short-help form-text text-muted">Include Tor in browser checks.</p>
+					<p class="nebula-help-text short-help form-text text-muted">Include Tor in browser checks. (Default: <?php echo nebula()->user_friendly_default('check_tor'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">Long help</p>
 					<p class="option-keywords">moderate page speed impact</p>
 				</div>
 			</div>
+
+			<div class="option-group">
+				<h3>Prototyping</h3>
+
+				<?php $themes = wp_get_themes(); ?>
+
+				<div class="form-group">
+					<input type="checkbox" name="nebula_options[prototype_mode]" id="prototype_mode" value="1" <?php checked('1', !empty($nebula_options['prototype_mode'])); ?> /><label for="prototype_mode">Prototype Mode</label>
+					<p class="nebula-help-text short-help form-text text-muted">When prototyping, enable this setting. (Default: <?php echo nebula()->user_friendly_default('prototype_mode'); ?>)</p>
+					<p class="nebula-help-text more-help form-text text-muted">Use the wireframe theme and production theme settings to develop the site while referencing the prototype. Use the staging theme to edit the site or develop new features while the site is live. If the staging theme is the active theme, use the Advanced Setting dropdown for "Theme For Everything" and choose a theme there for general visitors (Note: If using this setting, you may need to select that same theme for the admin-ajax option too!).</p>
+					<p class="option-keywords"></p>
+				</div>
+
+				<div class="form-group" dependent-of="prototype_mode">
+					<label for="wireframe_theme">Wireframe Theme</label>
+					<select name="nebula_options[wireframe_theme]" id="wireframe_theme" class="form-control nebula-validate-select">
+						<option value="" <?php selected('', $nebula_options['wireframe_theme']); ?>>None</option>
+                        <?php foreach ( $themes as $key => $value ): ?>
+                            <option value="<?php echo $key; ?>" <?php selected($key, $nebula_options['wireframe_theme']); ?>><?php echo $value->get('Name') . ' (' . $key . ')'; ?></option>
+                        <?php endforeach; ?>
+					</select>
+					<p class="nebula-help-text short-help form-text text-muted">The theme to use as the wireframe. Viewing this theme will trigger a greyscale view.</p>
+					<p class="option-keywords"></p>
+				</div>
+
+				<div class="form-group" dependent-of="prototype_mode">
+					<label for="staging_theme">Staging Theme</label>
+					<select name="nebula_options[staging_theme]" id="staging_theme" class="form-control nebula-validate-select">
+						<option value="" <?php selected('', $nebula_options['staging_theme']); ?>>None</option>
+                        <?php foreach ( $themes as $key => $value ): ?>
+                            <option value="<?php echo $key; ?>" <?php selected($key, $nebula_options['staging_theme']); ?>><?php echo $value->get('Name') . ' (' . $key . ')'; ?></option>
+                        <?php endforeach; ?>
+					</select>
+					<p class="nebula-help-text short-help form-text text-muted">The theme to use for staging new features. This is useful for site development after launch.</p>
+					<p class="option-keywords"></p>
+				</div>
+
+				<div class="form-group" dependent-of="prototype_mode">
+					<label for="production_theme">Production (Live) Theme</label>
+					<select name="nebula_options[production_theme]" id="production_theme" class="form-control nebula-validate-select">
+						<option value="" <?php selected('', $nebula_options['production_theme']); ?>>None</option>
+                        <?php foreach ( $themes as $key => $value ): ?>
+                            <option value="<?php echo $key; ?>" <?php selected($key, $nebula_options['production_theme']); ?>><?php echo $value->get('Name') . ' (' . $key . ')'; ?></option>
+                        <?php endforeach; ?>
+					</select>
+					<p class="nebula-help-text short-help form-text text-muted">The theme to use for production/live. This theme will become the live site.</p>
+					<p class="option-keywords"></p>
+				</div>
+			</div><!-- /option-group -->
 
 			<div class="option-group">
 				<h3>Examples</h3>
@@ -53,14 +115,14 @@
 				<div class="form-group">
 					<label for="example1">Example URL</label>
 					<input type="text" name="nebula_options[example1]" id="example1" class="form-control nebula-validate-url" value="<?php echo $nebula_options['example1']; ?>" placeholder="Yeah Whatever" />
-					<p class="nebula-help-text short-help form-text text-muted">Short help</p>
+					<p class="nebula-help-text short-help form-text text-muted">Short help.</p>
 					<p class="nebula-help-text more-help form-text text-muted">Long Help</p>
 					<p class="option-keywords"></p>
 				</div>
 
 				<div class="form-group">
 					<input type="checkbox" name="nebula_options[example2]" id="example2" value="1" <?php checked('1', !empty($nebula_options['example2'])); ?> /><label for="example2">Example 2</label>
-					<p class="nebula-help-text short-help form-text text-muted">Short help</p>
+					<p class="nebula-help-text short-help form-text text-muted">Short help. (Default: <?php echo nebula()->user_friendly_default('example2'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">Long help</p>
 					<p class="option-keywords"></p>
 				</div>
