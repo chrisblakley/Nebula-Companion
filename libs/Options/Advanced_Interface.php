@@ -61,6 +61,35 @@
 			</div>
 
 			<div class="option-group">
+				<h3>Stylesheets</h3>
+
+				<div class="form-group">
+					<input type="checkbox" name="nebula_options[dev_stylesheets]" id="dev_stylesheets" value="1" <?php checked('1', !empty($nebula_options['dev_stylesheets'])); ?> /><label for="dev_stylesheets">Developer Stylesheets</label>
+					<p class="nebula-help-text short-help form-text text-muted">Allows multiple developers to work on stylesheets simultaneously. (Default: <?php echo nebula()->user_friendly_default('dev_stylesheets'); ?>)</p>
+					<p class="nebula-help-text more-help form-text text-muted">Combines CSS files within /assets/css/dev/ into /assets/css/dev.css to allow multiple developers to work on a project without overwriting each other while maintaining a small resource footprint.</p>
+					<p class="option-keywords">sass scss sccs scass css minor page speed impact</p>
+				</div>
+			</div><!-- /option-group -->
+
+			<div class="option-group">
+				<h3>Admin</h3>
+
+				<div class="form-group">
+					<input type="checkbox" name="nebula_options[design_reference_metabox]" id="design_reference_metabox" value="1" <?php checked('1', !empty($nebula_options['design_reference_metabox'])); ?> /><label for="design_reference_metabox">Design Reference Metabox</label>
+					<p class="nebula-help-text short-help form-text text-muted">Show the Design Reference dashboard metabox. (Default: <?php echo nebula()->user_friendly_default('dev_stylesheets'); ?>)</p>
+					<p class="option-keywords"></p>
+				</div>
+
+				<div class="form-group">
+					<label for="additional_design_references">Additional Design References</label>
+					<textarea name="nebula_options[additional_design_references]" id="additional_design_references" class="form-control nebula-validate-textarea" rows="2"><?php echo $nebula_options['additional_design_references']; ?></textarea>
+					<p class="nebula-help-text short-help form-text text-muted">Add design references (such as links to brand guides) to the admin dashboard</p>
+					<p class="option-keywords"></p>
+				</div>
+
+			</div><!-- /option-group -->
+
+			<div class="option-group">
 				<h3>Prototyping</h3>
 
 				<?php $themes = wp_get_themes(); ?>

@@ -39,12 +39,13 @@ if ( !class_exists('Nebula_Companion') ){
 
 		//Setup plugin constants
 		private function constants(){
-			//do stuff
+			//Prep constants
 		}
 
 		//Set variables
 		private function variables(){
-			//do stuff
+			$this->wp_hook_times = array();
+			$this->time_before_companion = microtime(true); //Prep the time before Nebula companion begins
 		}
 
 		//Run action and filter hooks
@@ -64,7 +65,7 @@ if ( !class_exists('Nebula_Companion') ){
 
 		//Activate the plugin
 		public static function activate(){
-			//Do nothing
+			nebula()->usage('Companion Plugin Activation');
 		}
 
 		//Deactivate the plugin

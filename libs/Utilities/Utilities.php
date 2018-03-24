@@ -3,18 +3,98 @@
 if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
 if ( !trait_exists('Companion_Utilities') ){
-	//require_once plugin_dir_path(__FILE__) . '/Device.php';
+	require_once plugin_dir_path(__FILE__) . '/Sass.php';
 
 	trait Companion_Utilities {
-		//use Companion_Device { Companion_Device::hooks as Companion_DeviceHooks;}
+		use Companion_Sass { Companion_Sass::hooks as Companion_SassHooks;}
 
 		public function hooks(){
 			add_filter('nebula_preconnect', array($this, 'additional_preconnects'));
 			add_filter('nebula_get_browser', array($this, 'check_tor_is_browser'));
 			add_filter('nebula_session_id', array($this, 'add_session_id_parameter'));
 			//$this->Companion_DeviceHooks(); //Register Device hooks
-		}
 
+			add_filter('nebula_finalize_timings', array($this, 'additional_final_timings'));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			//https://codex.wordpress.org/Plugin_API/Action_Reference
+/*
+			add_action('muplugins_loaded', array($this, 'all_wp_hook_times'), 1);
+			add_action('registered_taxonomy', array($this, 'all_wp_hook_times'), 1);
+			add_action('registered_post_type', array($this, 'all_wp_hook_times'), 1);
+			add_action('plugins_loaded', array($this, 'all_wp_hook_times'), 1);
+			add_action('sanitize_comment_cookies', array($this, 'all_wp_hook_times'), 1);
+			add_action('setup_theme', array($this, 'all_wp_hook_times'), 1);
+			add_action('load_textdomain', array($this, 'all_wp_hook_times'), 1);
+			add_action('after_setup_theme', array($this, 'all_wp_hook_times'), 1);
+			add_action('auth_cookie_malformed', array($this, 'all_wp_hook_times'), 1);
+			add_action('auth_cookie_valid', array($this, 'all_wp_hook_times'), 1);
+			add_action('set_current_user', array($this, 'all_wp_hook_times'), 1);
+			add_action('init', array($this, 'all_wp_hook_times'), 1);
+			add_action('widgets_init', array($this, 'all_wp_hook_times'), 1);
+			add_action('register_sidebar', array($this, 'all_wp_hook_times'), 1);
+			add_action('wp_register_sidebar_widget', array($this, 'all_wp_hook_times'), 1);
+			add_action('admin_bar_init', array($this, 'all_wp_hook_times'), 1);
+			add_action('add_admin_bar_menus', array($this, 'all_wp_hook_times'), 1);
+			add_action('wp_loaded', array($this, 'all_wp_hook_times'), 1);
+			add_action('parse_request', array($this, 'all_wp_hook_times'), 1);
+			add_action('send_headers', array($this, 'all_wp_hook_times'), 1);
+			add_action('parse_query', array($this, 'all_wp_hook_times'), 1);
+			add_action('pre_get_posts', array($this, 'all_wp_hook_times'), 1);
+			add_action('posts_selection', array($this, 'all_wp_hook_times'), 1);
+			add_action('wp', array($this, 'all_wp_hook_times'), 1);
+			add_action('template_redirect', array($this, 'all_wp_hook_times'), 1);
+			add_action('get_header', array($this, 'all_wp_hook_times'), 1);
+			add_action('wp_enqueue_scripts', array($this, 'all_wp_hook_times'), 1);
+			add_action('wp_head', array($this, 'all_wp_hook_times'), 1);
+			add_action('wp_print_styles', array($this, 'all_wp_hook_times'), 1);
+			add_action('wp_print_scripts', array($this, 'all_wp_hook_times'), 1);
+			add_action('get_search_form', array($this, 'all_wp_hook_times'), 1);
+			add_action('get_template_part_content', array($this, 'all_wp_hook_times'), 1);
+			add_action('get_sidebar', array($this, 'all_wp_hook_times'), 1);
+			add_action('dynamic_sidebar', array($this, 'all_wp_hook_times'), 1);
+			add_action('get_search_form', array($this, 'all_wp_hook_times'), 1);
+			add_action('wp_meta', array($this, 'all_wp_hook_times'), 1);
+			add_action('get_footer', array($this, 'all_wp_hook_times'), 1);
+			add_action('get_sidebar', array($this, 'all_wp_hook_times'), 1);
+			add_action('wp_footer', array($this, 'all_wp_hook_times'), 1);
+			add_action('wp_print_footer_scripts', array($this, 'all_wp_hook_times'), 1);
+			add_action('wp_before_admin_bar_render', array($this, 'all_wp_hook_times'), 1);
+			add_action('wp_after_admin_bar_render', array($this, 'all_wp_hook_times'), 1);
+			add_action('shutdown', array($this, 'all_wp_hook_times'), 1);
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		}
 
 		public function add_session_id_parameter($session_data){
 			//Prototype Mode
@@ -25,7 +105,7 @@ if ( !trait_exists('Companion_Utilities') ){
 			return $session_data;
 		}
 
-		//Detect location from IP address using https://freegeoip.io/
+		//Detect location from IP address using https://freegeoip.net/
 		public function ip_location($data=null, $ip_address=false){
 			if ( nebula()->get_option('ip_geolocation') ){
 				if ( empty($ip_address) ){
@@ -46,7 +126,7 @@ if ( !trait_exists('Companion_Utilities') ){
 
 					//Get new remote data
 					if ( empty($_SESSION['nebula_ip_geolocation']) ){
-						$response = nebula()->remote_get('http://freegeoip.io/json/' . $ip_address);
+						$response = nebula()->remote_get('http://freegeoip.net/json/' . $ip_address);
 						if ( is_wp_error($response) || !is_array($response) || strpos($response['body'], 'Rate limit') === 0 ){
 							return false;
 						}
@@ -313,6 +393,61 @@ if ( !trait_exists('Companion_Utilities') ){
 
 			nebula()->set_global_session_cookie('tor', false, array('global', 'session'));
 			return false;
+		}
+
+		//Automatically convert HEX colors to RGB.
+		public function hex2rgb($color){
+			$override = apply_filters('pre_hex2rgb', false, $color);
+			if ( $override !== false ){return $override;}
+
+			if ( $color[0] == '#' ){
+				$color = substr($color, 1);
+			}
+
+			if ( strlen($color) == 6 ){
+				list($r, $g, $b) = array($color[0] . $color[1], $color[2] . $color[3], $color[4] . $color[5]);
+			} elseif ( strlen($color) == 3 ){
+				list($r, $g, $b) = array($color[0] . $color[0], $color[1] . $color[1], $color[2] . $color[2]);
+			} else {
+				return false;
+			}
+
+			$r = hexdec($r);
+			$g = hexdec($g);
+			$b = hexdec($b);
+
+			return array('r' => $r, 'g' => $g, 'b' => $b);
+		}
+
+		//Time all core WordPress hooks
+		//@todo: Why isn't this getting called for all hooks?
+		public function all_wp_hook_times(){
+			//@todo: Set a "last time" variable to subtract against to figure out duration?
+			$this->wp_hook_times['WP ' . current_filter()] = microtime(true);
+		}
+
+		//Additional finalized timings
+		public function additional_final_timings($server_timings){
+
+			//echo '<pre>' . var_export($this->wp_hook_times, true) . '</pre>';
+			foreach ( $this->wp_hook_times as $hook => $time ){
+				$server_timings[$hook] = array(
+					'start' => -1,
+					'end' => $time,
+					'time' => $time-$_SERVER['REQUEST_TIME_FLOAT']
+				);
+			}
+
+			//Before Nebula Companion Plugin
+			$server_timings['Before Companion'] = array(
+				'start' => $_SERVER['REQUEST_TIME_FLOAT'],
+				'end' => $_SERVER['REQUEST_TIME_FLOAT']+$this->time_before_companion,
+				'time' => $this->time_before_companion-$_SERVER['REQUEST_TIME_FLOAT']
+			);
+
+			//echo '<br><br><pre>' . var_export($server_timings, true) . '</pre>';
+
+			return $server_timings;
 		}
 	}
 }

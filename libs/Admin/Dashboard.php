@@ -6,11 +6,48 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Companion_Dashboard') ){
 	trait Companion_Dashboard {
 		public function hooks(){
+			add_action('wp_dashboard_setup', array($this, 'design_metabox'));
 			add_action('wp_dashboard_setup', array($this, 'github_metabox'));
 			add_action('nebula_user_metabox', array($this, 'more_user_dashboard_data'));
 			add_action('nebula_dev_dashboard_directories', array($this, 'more_directory_sizes'));
 			add_filter('nebula_directory_search_options', array($this, 'search_prototype_directories'));
 			add_filter('nebula_search_directories', array($this, 'add_prototyping_search_directories'));
+		}
+
+		//Add a dashboard metabox for design reference
+		public function design_metabox(){
+			if ( nebula()->get_option('design_reference_metabox') ){
+				global $wp_meta_boxes;
+				wp_add_dashboard_widget('nebula_design', 'Design Reference', array($this, 'dashboard_nebula_design'));
+			}
+		}
+
+		public function dashboard_nebula_design(){
+			$primary_hex = get_theme_mod('nebula_primary_color', nebula()->sass_color('primary'));
+			$primary_rgb = $this->hex2rgb($primary_hex);
+
+			$secondary_hex = get_theme_mod('nebula_secondary_color', nebula()->sass_color('secondary'));
+			$secondary_rgb = $this->hex2rgb($secondary_hex);
+			?>
+				<div style="display: flex; align-items: center; margin-bottom: 10px;">
+					<a href="https://www.webpagefx.com/web-design/hex-to-rgb/<?php echo $primary_hex; ?>" target="_blank" style="display: block; width: 50px; height: 50px; background: <?php echo $primary_hex; ?>; margin-right: 10px;"></a>
+					<div>
+						<strong>Primary Color</strong><br />
+						Hex <?php echo $primary_hex; ?><br />
+						RGB <?php echo $primary_rgb['r'] . ', ' . $primary_rgb['g'] . ', ' . $primary_rgb['b']; ?><br />
+					</div>
+				</div>
+				<div style="display: flex; align-items: center; margin-bottom: 10px;">
+					<a href="https://www.webpagefx.com/web-design/hex-to-rgb/<?php echo $secondary_hex; ?>" target="_blank" style="display: block; width: 50px; height: 50px; background: <?php echo $secondary_hex; ?>; margin-right: 10px;"></a>
+					<div>
+						<strong>Secondary Color</strong><br />
+						Hex <?php echo $secondary_hex; ?><br />
+						RGB <?php echo $secondary_rgb['r'] . ', ' . $secondary_rgb['g'] . ', ' . $secondary_rgb['b']; ?><br />
+					</div>
+				</div>
+			<?php
+
+			echo nebula()->get_option('additional_design_references');
 		}
 
 		//Add a Github metabox for recently updated issues
