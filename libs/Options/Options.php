@@ -19,13 +19,16 @@ if ( !trait_exists('Companion_Options') ){
 			$default_options['ip_geolocation'] = 0;
 			$default_options['dev_stylesheets'] = 0;
 			$default_options['weather'] = 0;
+			$default_options['ga_load_abandon'] = 0;
 			$default_options['prototype_mode'] = 0;
 			$default_options['wireframe_theme'] = '';
 			$default_options['staging_theme'] = '';
 			$default_options['production_theme'] = '';
 			$default_options['check_tor'] = 0;
 			$default_options['design_reference_metabox'] = 0;
+			$default_options['design_reference_link'] = '';
 			$default_options['additional_design_references'] = '';
+			$default_options['audit_mode'] = 0;
 
 			return $default_options;
 		}

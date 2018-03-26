@@ -13,12 +13,14 @@ if ( !trait_exists('Companion_Utilities') ){
 			add_filter('nebula_get_browser', array($this, 'check_tor_is_browser'));
 			add_filter('nebula_session_id', array($this, 'add_session_id_parameter'));
 			//$this->Companion_DeviceHooks(); //Register Device hooks
+			add_action('wp_footer', array($this, 'visualize_scroll_percent'));
 
 			add_filter('nebula_finalize_timings', array($this, 'additional_final_timings'));
 
+			add_action('nebula_head_open', array($this, 'ga_track_load_abandons')); //This is the earliest anything can be placed in the <head>
 
-
-
+			add_filter('nebula_warnings', array($this, 'audit_mode_server_checks'));
+			add_action('wp_footer', array($this, 'audit_mode_output'), 9999); //Late execution as possible
 
 
 
@@ -449,5 +451,300 @@ if ( !trait_exists('Companion_Utilities') ){
 
 			return $server_timings;
 		}
+
+		//Load abandonment tracking
+		//Note: Unlike ga_send_event() this function ignores session page count. These events are typically sent before the pageview.
+		public function ga_track_load_abandons(){
+			if ( nebula()->get_option('ga_load_abandon') && !nebula()->is_bot() && !is_customize_preview() ){
+				$custom_metric_hitID = ( nebula()->get_option('cd_hitid') )? "'cd" . str_replace('dimension', '', nebula()->get_option('cd_hitid')) . "=" . nebula()->ga_generate_UUID() . "'," : ''; //Create the Measurement Protocol parameter for cd
+
+				$common_parameters = '';
+				foreach ( nebula()->ga_common_parameters() as $parameter => $value ){
+					$common_parameters .= $parameter . '="' . $value . '",';
+				}
+
+				?>
+				<script>
+					document.addEventListener('visibilitychange', loadAbandonTracking);
+					window.onbeforeunload = loadAbandonTracking;
+
+					function loadAbandonTracking(e){
+						if ( e.type === 'visibilitychange' && document.visibilityState === 'visible' ){
+							return false;
+						}
+
+						//Remove listeners so this can only trigger once
+						document.removeEventListener('visibilitychange', loadAbandonTracking);
+						window.onbeforeunload = null;
+
+						var loadAbandonLevel = 'Unload'; //Typically only desktop browsers trigger this event (sometimes)
+						if ( e.type === 'visibilitychange' ){
+							loadAbandonLevel = 'Visibility Change'; //This more accurately captures mobile browsers and the majority of abandon types
+						}
+
+						var newReturning = "<?php echo ( isset($_COOKIE['_ga']) )? 'Returning visitor or multiple pageview session' : 'New user or blocking Google Analytics cookie'; ?>";
+
+						//Event
+						navigator.sendBeacon && navigator.sendBeacon('https://www.google-analytics.com/collect', [
+							<?php echo $common_parameters; ?>
+							't=event', //Hit Type
+							'ec=Load Abandon', //Event Category
+							'ea=' + loadAbandonLevel, //Event Action
+							'el=' + newReturning, //Event Label
+							'ev=' + Math.round(performance.now()), //Event Value
+							'ni=1', //Non-Interaction Hit
+							<?php echo $custom_metric_hitID; //Unique Hit ID ?>
+						].join('&'));
+
+						//User Timing
+						navigator.sendBeacon && navigator.sendBeacon('https://www.google-analytics.com/collect', [
+							<?php echo $common_parameters; ?>
+							't=timing', //Hit Type
+							'utc=Load Abandon', //Timing Category
+							'utv=' + loadAbandonLevel, //Timing Variable Name
+							'utt=' + Math.round(performance.now()), //Timing Time (milliseconds)
+							'utl=' + newReturning, //Timing Label
+							<?php echo $custom_metric_hitID; //Unique Hit ID ?>
+						].join('&'));
+					}
+
+					//Remove abandonment listeners on window load
+					window.addEventListener('load', function(){
+						document.removeEventListener('visibilitychange', loadAbandonTracking);
+						if ( window.onbeforeunload === loadAbandonTracking ){
+							window.onbeforeunload = null;
+						}
+					});
+				</script>
+				<?php
+			}
+		}
+
+		//Visualize max scroll percent by adding ?max=16.12 to the URL
+		public function visualize_scroll_percent(){
+			if ( isset($_GET['max_scroll']) && nebula()->is_staff() ){
+				?>
+					<script>
+						jQuery(window).on('load', function(){
+							setTimeout(function(){
+								scrollTop = jQuery(window).scrollTop();
+								pageHeight = jQuery(document).height();
+								viewportHeight = jQuery(window).height();
+								var percentTop = ((pageHeight-viewportHeight)*<?php echo $_GET['max_scroll']; ?>)/100;
+								var divHeight = pageHeight-percentTop;
+
+								jQuery(window).on('scroll', function(){
+									scrollTop = jQuery(window).scrollTop();
+									var currentScrollPercent = ((scrollTop/(pageHeight-viewportHeight))*100).toFixed(2);
+								    console.log('Current Scroll Percent: ' + currentScrollPercent + '%');
+								});
+
+								jQuery('<div style="display: none; position: absolute; top: ' + percentTop + 'px; left: 0; width: 100%; height: ' + divHeight + 'px; border-top: 2px solid orange; background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.8) ' + viewportHeight + 'px); z-index: 999999; pointer-events: none; overflow: hidden;"><div style="position: absolute; top: ' + viewportHeight + 'px; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); border-top: 2px solid red;"></div></div>').appendTo('body').fadeIn();
+							}, 500);
+						});
+					</script>
+				<?php
+			}
+		}
+
+
+
+
+
+
+		//Add more in-depth checks to Nebula Warnings when Audit Mode is enabled
+		public function audit_mode_server_checks($nebula_warnings){
+			if ( nebula()->get_option('audit_mode') ){
+				//Search individual files for debug output
+				foreach ( nebula()->glob_r(get_stylesheet_directory() . '/*') as $filepath ){
+					if ( is_file($filepath) ){
+						$skip_filenames = array('README.md', 'debug_log', 'error_log', '/vendor', 'resources/');
+
+						if ( !nebula()->contains($filepath, nebula()->skip_extensions()) && !nebula()->contains($filepath, $skip_filenames) ){
+							if ( substr(basename($filepath), -3) == '.js' ){ //JavaScript files
+								$looking_for = "/console\./i";
+							} elseif ( substr(basename($filepath), -4) == '.php' ){ //PHP files
+								$looking_for = "/var_dump\(/i";
+							} elseif ( substr(basename($filepath), -5) == '.scss' ){ //Sass files
+								continue; //Remove this to allow checking scss files
+								$looking_for = "/@debug/i";
+							} else {
+								continue;
+							}
+
+							foreach ( file($filepath) as $line_number => $full_line ){
+								preg_match($looking_for, $full_line, $details);
+
+								if ( !empty($details) ){
+									$nebula_warnings[] = array(
+										'level' => 'warn',
+										'description' => 'Possible debug output in <strong>' . str_replace(get_stylesheet_directory(), '', dirname($filepath)) . '/' . basename($filepath) . '</strong> on <strong>line ' . $line_number . '</strong>.'
+									);
+								}
+							}
+						}
+					}
+				}
+
+				//Check for sitemap
+				if ( !nebula()->is_available(home_url('/') . 'sitemap_index.xml', false, true) ){
+					$nebula_warnings[] = array(
+						'level' => 'warn',
+						'description' => 'Missing sitemap XML'
+					);
+				}
+
+				//Check for Yoast active
+				if ( !is_plugin_active('wordpress-seo/wp-seo.php') ){
+					$nebula_warnings[] = array(
+						'level' => 'warn',
+						'description' => 'Yoast SEO plugin is not active'
+					);
+				}
+			}
+
+			return $nebula_warnings;
+		}
+
+		//Check for some common issues pre-launch
+		public function audit_mode_output(){
+			if ( nebula()->get_option('audit_mode') ){
+				//Automatically disable this option 1 hour after last usage
+				if ( current_user_can('manage_options') || nebula()->is_dev() ){ //If admin or dev user
+					set_transient('nebula_audit_mode_expiration', time(), HOUR_IN_SECONDS); //Extend audit mode to expire 1 hour from now
+				} else {
+					$nebula_audit_mode_expiration = get_transient('nebula_audit_mode_expiration');
+					if ( empty($nebula_audit_mode_expiration) ){
+						nebula()->update_option('audit_mode', 0); //Disable audit mode
+					}
+				}
+
+				$nebula_warnings = json_encode(nebula()->check_warnings());
+				?>
+					<style>
+						.nebula-audit .audit-desc {position: absolute; bottom: 0; right: 0; color: #fff; background: grey; font-size: 10px; padding: 3px 5px; z-index: 9999;}
+							.nebula-audit .nebula-audit .audit-desc {right: auto; left: 0;}
+								.nebula-audit .nebula-audit .nebula-audit .audit-desc {right: 0; left: auto; bottom: auto; top: 0;}
+									.nebula-audit .nebula-audit .nebula-audit .nebula-audit .audit-desc {right: auto; left: 0; bottom: auto; top: 0;}
+						.audit-error {position: relative; border: 2px solid red;}
+							.audit-error .audit-desc {background: red;}
+						.audit-warn {position: relative; border: 2px solid orange;}
+							.audit-warn .audit-desc {background: orange;}
+						.audit-notice {position: relative; border: 2px solid blue;}
+							.audit-notice .audit-desc {background: blue;}
+						#audit-results {position: relative; background: #444; color: #fff; padding: 50px;}
+					</style>
+					<script>
+						jQuery(window).on('load', function(){
+							setTimeout(function(){
+								jQuery('body').append(jQuery('<div id="audit-results"><p><strong>Nebula Audit Results:</strong></p><ul></ul></div>'));
+
+								//Check performance timings... this is tough because this audit will increase load time itself...
+
+								//Empty meta description
+								if ( !jQuery('meta[name="description"]').attr('content').length ){
+									jQuery("#audit-results ul").append('<li>Missing meta description</li>');
+								} else {
+									if ( jQuery('meta[name="description"]').attr('content').length < 60 ){
+										jQuery("#audit-results ul").append('<li>Short meta description</li>');
+									}
+								}
+
+								//Check title
+								if ( !document.title.length ){
+									jQuery("#audit-results ul").append('<li>Missing page title</li>');
+								} else {
+									if ( document.title.length < 25 ){
+										jQuery("#audit-results ul").append('<li>Short page title</li>');
+									}
+
+									if ( document.title.indexOf('Home') > -1 ){
+										jQuery("#audit-results ul").append('<li>Improve page title keywords (remove "Home")</li>');
+									}
+								}
+
+								//Check H1
+								if ( !jQuery('h1').length ){
+									jQuery("#audit-results ul").append('<li>Missing H1 tag</li>');
+
+									if ( jQuery('h1').length > 1 ){
+										jQuery("#audit-results ul").append('<li>Too many H1 tags</li>');
+									}
+								}
+
+								//Check H2
+								if ( !jQuery('h2').length ){
+									jQuery("#audit-results ul").append('<li>Missing H2 tag</li>');
+								} else if ( jQuery('h2') <= 2 ){
+									jQuery("#audit-results ul").append('<li>Very few H2 tags</li>');
+								}
+
+								//Broken images
+								jQuery('img').on('error', function(){
+									jQuery(this).addClass('nebula-audit audit-error').append(jQuery('<div class="audit-desc">Broken image</div>'));
+									jQuery("#audit-results ul").append('<li>Broken image</li>');
+								});
+
+								//Check img alt
+								jQuery('img:not([alt]), img[alt=""]').each(function(){
+									jQuery(this).wrap('<div class="nebula-audit audit-error"></div>').after('<div class="audit-desc">Missing ALT attribute</div>');
+									jQuery("#audit-results ul").append('<li>Missing ALT attribute</li>');
+								});
+
+								//Images
+								jQuery('img').each(function(){
+									//Check image filesize. Note: cached images are 0
+									if ( window.performance ){ //IE10+
+										var iTime = performance.getEntriesByName(jQuery(this).attr('src'))[0];
+										if ( iTime && iTime.transferSize >= 500000 ){
+											jQuery(this).wrap('<div class="nebula-audit audit-warn"></div>').after('<div class="audit-desc">Image filesize over 500kb</div>');
+											jQuery("#audit-results ul").append('<li>Image filesize over 500kb</li>');
+										}
+									}
+
+									//Check image width
+									if ( jQuery(this)[0].naturalWidth > 1200 ){
+										jQuery(this).wrap('<div class="nebula-audit audit-warn"></div>').after('<div class="audit-desc">Image wider than 1200px</div>');
+										jQuery("#audit-results ul").append('<li>Image wider than 1200px</li>');
+									}
+
+									//Check image link
+									if ( !jQuery(this).parents('a').length ){
+										jQuery(this).wrap('<div class="nebula-audit audit-notice"></div>').after('<div class="audit-desc">Unlinked Image</div>');
+										jQuery("#audit-results ul").append('<li>Unlinked image</li>');
+									}
+								});
+
+								var nebulaWarnings = <?php echo $nebula_warnings; ?> || {};
+								jQuery.each(nebulaWarnings, function(i, warning){
+									if ( warning.description.indexOf('Nebula Audit Mode') > 0 ){
+										return true; //Skip
+									}
+									jQuery("#audit-results ul").append('<li>' + warning.description + '</li>');
+								});
+
+								<?php if ( !is_home() ): ?>
+									//Check breadcrumb schema tag
+									if ( !jQuery('[itemtype*=BreadcrumbList]').length ){
+										jQuery("#audit-results ul").append('<li>Missing breadcrumb schema tag</li>');
+									}
+								<?php endif; ?>
+
+								//Missing sitemap? https://gearside.com/nebula/sitemap.xml
+
+								//Check issue count (do this last)
+								if ( jQuery("#audit-results ul li").length <= 0 ){
+									jQuery("#audit-results").append('<p><strong><i class="fas fa-fw fa-check"></i> No issues were found on this page.</strong> Be sure to check others (and run <a href="https://gearside.com/nebula/get-started/checklists/testing-checklist/" target="_blank">more authoritative tests</a>)!</p>');
+								} else {
+									jQuery("#audit-results").append('<p><strong><i class="fas fa-fw fa-times"></i> Found issues: ' + jQuery("#audit-results ul li").length + '<strong></p>');
+								}
+								jQuery("#audit-results").append('<p><small>Note: This does not check for @todo comments. Use the To-Do Manager in WP Admin for those.</small></p>');
+							}, 1);
+						});
+					</script>
+				<?php
+			}
+		}
+
 	}
 }

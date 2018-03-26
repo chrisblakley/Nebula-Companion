@@ -39,6 +39,13 @@
 		<div class="col-xl-8">
 			<div class="option-group">
 				<h3>Detection</h3>
+				<div class="form-group" dependent-or="ga_tracking_id">
+					<input type="checkbox" name="nebula_options[ga_load_abandon]" id="ga_load_abandon" value="1" <?php checked('1', !empty($nebula_options['ga_load_abandon'])); ?> /><label for="ga_load_abandon">Load Abandonment Tracking</label>
+					<p class="nebula-help-text short-help form-text text-muted">Track when visitors leave the page before it finishes loading. (Default: <?php echo nebula()->user_friendly_default('ga_load_abandon'); ?>)</p>
+					<p class="nebula-help-text more-help form-text text-muted">This is implemented outside of the typical event tracking and because this event happens before the pageview is sent it will slightly alter user/session data (more users than sessions). It is recommended to create a View (and/or a segment) in Google Analytics specific to tracking load abandonment and filter out these hits from the primary reporting view (<code>Sessions > Exclude > Event Category > contains > Load Abandon</code>).</p>
+					<p class="option-keywords"></p>
+				</div>
+
 				<div class="form-group">
 					<input type="checkbox" name="nebula_options[ip_geolocation]" id="ip_geolocation" value="1" <?php checked('1', !empty($nebula_options['ip_geolocation'])); ?> /><label for="ip_geolocation">IP Geolocation</label>
 					<p class="nebula-help-text short-help form-text text-muted">Lookup the country, region, and city of the user based on their IP address. (Default: <?php echo nebula()->user_friendly_default('ip_geolocation'); ?>)</p>
@@ -58,6 +65,14 @@
 					<p class="nebula-help-text more-help form-text text-muted">Long help</p>
 					<p class="option-keywords">moderate page speed impact</p>
 				</div>
+
+
+				<div class="form-group">
+					<input type="checkbox" name="nebula_options[audit_mode]" id="audit_mode" value="1" <?php checked('1', !empty($nebula_options['audit_mode'])); ?> /><label for="audit_mode">Audit Mode</label>
+					<p class="nebula-help-text short-help form-text text-muted">Visualize (at list) common issues on the front-end. (Default: <?php echo nebula()->user_friendly_default('audit_mode'); ?>)</p>
+					<p class="nebula-help-text more-help form-text text-muted">This option automatically disables itself 1 hour after last use.</p>
+					<p class="option-keywords"></p>
+				</div>
 			</div>
 
 			<div class="option-group">
@@ -72,11 +87,18 @@
 			</div><!-- /option-group -->
 
 			<div class="option-group">
-				<h3>Admin</h3>
+				<h3>Design References</h3>
 
 				<div class="form-group">
 					<input type="checkbox" name="nebula_options[design_reference_metabox]" id="design_reference_metabox" value="1" <?php checked('1', !empty($nebula_options['design_reference_metabox'])); ?> /><label for="design_reference_metabox">Design Reference Metabox</label>
 					<p class="nebula-help-text short-help form-text text-muted">Show the Design Reference dashboard metabox. (Default: <?php echo nebula()->user_friendly_default('dev_stylesheets'); ?>)</p>
+					<p class="option-keywords"></p>
+				</div>
+
+				<div class="form-group">
+					<label for="design_reference_link">Design File(s) URL</label>
+					<input type="text" name="nebula_options[design_reference_link]" id="design_reference_link" class="form-control nebula-validate-url" value="<?php echo $nebula_options['design_reference_link']; ?>" placeholder="http://" />
+					<p class="nebula-help-text short-help form-text text-muted">Link to the design file(s).</p>
 					<p class="option-keywords"></p>
 				</div>
 

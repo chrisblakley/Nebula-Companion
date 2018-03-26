@@ -37,11 +37,24 @@ trait Companion_Functions {
 
 	//Add more warnings to the Nebula check
 	public function nebula_companion_warnings($nebula_warnings){
+		//If Audit Mode is enabled
+		if ( nebula()->get_option('audit_mode') ){
+			$nebula_pre_launch_audit_mode_expiration = get_transient('nebula_audit_mode_expiration');
+			if ( empty($nebula_pre_launch_audit_mode_expiration) ){
+				$nebula_pre_launch_audit_mode_expiration = time();
+			}
+
+			$nebula_warnings[] = array(
+				'level' => 'error',
+				'description' => '<a href="themes.php?page=nebula_options&tab=advanced&option=pre_launch_audit_mode">Pre-Launch Audit Mode</a> is enabled! This is visible to all visitors. It will automatically be disabled in ' . human_time_diff($nebula_pre_launch_audit_mode_expiration+HOUR_IN_SECONDS) . '.'
+			);
+		}
+
 		//If website is live and using Prototype Mode
 		if ( nebula()->is_site_live() && nebula()->get_option('prototype_mode') ){
 			$nebula_warnings[] = array(
 				'level' => 'warn',
-				'description' => '<a href="plugins.php">Prototype Mode</a> is enabled (' . ucwords($this->dev_phase()) . ')!'
+				'description' => '<a href="themes.php?page=nebula_options&tab=advanced&option=prototype_mode">Prototype Mode</a> is enabled (' . ucwords($this->dev_phase()) . ')!'
 			);
 		}
 
@@ -49,7 +62,7 @@ trait Companion_Functions {
 		if ( !nebula()->get_option('prototype_mode') && is_plugin_active('jonradio-multiple-themes/jonradio-multiple-themes.php') ){
 			$nebula_warnings[] = array(
 				'level' => 'error',
-				'description' => '<a href="plugins.php">Prototype Mode</a> is disabled, but <a href="plugins.php">Multiple Theme plugin</a> is still active.',
+				'description' => '<a href="themes.php?page=nebula_options&tab=advanced&option=prototype_mode">Prototype Mode</a> is disabled, but <a href="plugins.php">Multiple Theme plugin</a> is still active.',
 				'url' => 'plugins.php'
 			);
 		}

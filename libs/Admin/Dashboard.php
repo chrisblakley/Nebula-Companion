@@ -23,6 +23,10 @@ if ( !trait_exists('Companion_Dashboard') ){
 		}
 
 		public function dashboard_nebula_design(){
+			if ( nebula()->get_option('design_reference_link') ){
+				echo '<p><i class="fas fa-fw fa-file-image"></i> <a href="' . nebula()->get_option('design_reference_link') . '" target="_blank">Design File(s) &raquo;</a></p>';
+			}
+
 			$primary_hex = get_theme_mod('nebula_primary_color', nebula()->sass_color('primary'));
 			$primary_rgb = $this->hex2rgb($primary_hex);
 
@@ -47,7 +51,9 @@ if ( !trait_exists('Companion_Dashboard') ){
 				</div>
 			<?php
 
-			echo nebula()->get_option('additional_design_references');
+			if ( nebula()->get_option('additional_design_references') ){
+				echo '<p><strong>Additional Notes:</strong><br />' . nebula()->get_option('additional_design_references') . '</p>';
+			}
 		}
 
 		//Add a Github metabox for recently updated issues
