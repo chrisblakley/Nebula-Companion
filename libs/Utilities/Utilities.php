@@ -715,6 +715,9 @@ if ( !trait_exists('Companion_Utilities') ){
 									}
 								});
 
+								//@todo: check video sizes too
+								//@todo: maybe offcanvas images?
+
 								var nebulaWarnings = <?php echo $nebula_warnings; ?> || {};
 								jQuery.each(nebulaWarnings, function(i, warning){
 									if ( warning.description.indexOf('Nebula Audit Mode') > 0 ){

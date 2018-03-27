@@ -1,7 +1,7 @@
 # Nebula Companion
 This is a companion WordPress plugin to the [Nebula theme framework](https://gearside.com/?utm_campaign=documentation&utm_medium=readme&utm_source=github&utm_content=intro). This companion plugin provides more advanced features and options that may not be needed for most typical websites.
 
-![Nebula](https://github.com/chrisblakley/Nebula/blob/master/assets/img/meta/og-thumb.png?raw=true)
+![Nebula](https://raw.githubusercontent.com/chrisblakley/Nebula-Companion/master/assets/img/banner-1544x500.png)
 
 ## Requirements
 
