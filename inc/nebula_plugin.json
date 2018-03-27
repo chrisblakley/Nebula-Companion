@@ -10,7 +10,7 @@
 	"sections": {
 		"description": "A plugin with more niche functionality for the Nebula WordPress theme framework.",
 		"installation": "Upload to the WordPress plugins directory and activate. This only runs when the Nebula theme is active.",
-		"changelog": "<p><strong>Latest Change</strong><br>Update nebula_plugin.json</p><p><a href='https://github.com/chrisblakley/Nebula-Companion/commits/master' target='_blank'>See full changelog here &raquo;</p>",
+		"changelog": "<p><strong>Latest Change</strong><br>Update nebula_plugin.json</p><p><a href='https://github.com/chrisblakley/Nebula-Companion/commits/master' target='_blank'>See full changelog here &raquo;</p>"
 	},
 	"icons" : {
 		"1x" : "https://raw.githubusercontent.com/chrisblakley/Nebula-Companion/master/assets/img/icon-128x128.png",
