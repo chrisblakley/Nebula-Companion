@@ -3,7 +3,7 @@
 Plugin Name: Nebula Companion
 Plugin URI: https://gearside.com/nebula/
 Description: Advanced features for use with the Nebula theme
-Version: 1.0.0
+Version: 0.0.1
 Author: Chris Blakley
 Author URI: https://gearside.com/nebula
 */
@@ -39,7 +39,7 @@ if ( !class_exists('Nebula_Companion') ){
 
 		//Setup plugin constants
 		private function constants(){
-			//Prep constants
+			$this->plugin_directory = plugin_dir_path(__FILE__);
 		}
 
 		//Set variables

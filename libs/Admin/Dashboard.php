@@ -81,8 +81,6 @@ if ( !trait_exists('Companion_Dashboard') ){
 			if ( empty($github_commit_json) || nebula()->is_debug() ){
 				$response = nebula()->remote_get('https://api.github.com/repos/' . $repo_name . '/commits');
 
-				//$response = nebula()->remote_get('https://api.github.com/repos/PinckneyHugoGroup/Dwyer-Strategy/issues?sort=updated'); //delete this
-
 				if ( is_wp_error($response) ){
 			        echo '<p>There was an error retrieving the Github commits...</p>';
 			        return false;
