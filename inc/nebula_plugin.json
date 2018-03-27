@@ -1,31 +1,23 @@
 {
 	"name": "Nebula Companion",
-	"version": "0.3.4.5",
+	"version": "5.10.25.1234",
 	"download_url": "https://github.com/chrisblakley/Nebula-Companion/archive/master.zip",
-
-	"homepage": "https://gearside.com/",
-	"requires": "4.5",
-	"tested": "4.8",
-	"last_updated": "2017-01-01 16:17:00",
-	"upgrade_notice": "Here's why you should upgrade...",
-
+	"homepage": "https://gearside.com/nebula/?utm_campaign=nebula+companion+plugin&utm_source=wordpress&utm_medium=wordpress&utm_content=plugin+update+details",
+	"last_updated": "2018-03-26 00:00:00",
+	"upgrade_notice": "Update nebula_plugin.json",
 	"author": "Chris Blakley",
-	"author_homepage": "https://gearside.com/",
-
+	"author_homepage": "https://gearside.com/nebula/?utm_campaign=nebula+companion+plugin&utm_source=wordpress&utm_medium=wordpress&utm_content=plugin+update+details",
 	"sections": {
-		"description": "(Required) Plugin description. Basic HTML can be used in all sections.",
-		"installation": "(Recommended) Installation instructions.",
-		"changelog": "(Recommended) Changelog. <p>This section will be displayed by default when the user clicks 'View version x.y.z details'.</p>",
-		"custom_section": "This is a custom section labeled 'Custom Section'."
+		"description": "A plugin with more niche functionality for the Nebula WordPress theme framework.",
+		"installation": "Upload to the WordPress plugins directory and activate. This only runs when the Nebula theme is active.",
+		"changelog": "<p><strong>Latest Change</strong><br>Update nebula_plugin.json</p><p><a href='https://github.com/chrisblakley/Nebula-Companion/commits/master' target='_blank'>See full changelog here &raquo;</p>",
 	},
-
 	"icons" : {
-		"1x" : "http://w-shadow.com/files/external-update-example/assets/icon-128x128.png",
-		"2x" : "http://w-shadow.com/files/external-update-example/assets/icon-256x256.png"
+		"1x" : "https://raw.githubusercontent.com/chrisblakley/Nebula-Companion/master/assets/img/icon-128x128.png",
+		"2x" : "https://raw.githubusercontent.com/chrisblakley/Nebula-Companion/master/assets/img/icon-256x256.png"
     },
-
 	"banners": {
-		"low": "http://w-shadow.com/files/external-update-example/assets/banner-772x250.png",
-		"high": "http://w-shadow.com/files/external-update-example/assets/banner-1544x500.png"
+		"low": "https://raw.githubusercontent.com/chrisblakley/Nebula-Companion/master/assets/img/banner-772x250.png",
+		"high": "https://raw.githubusercontent.com/chrisblakley/Nebula-Companion/master/assets/img/banner-1544x500.png"
 	}
 }
