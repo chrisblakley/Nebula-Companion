@@ -19,7 +19,7 @@ if ( !trait_exists('Companion_Utilities') ){
 
 			add_action('nebula_head_open', array($this, 'ga_track_load_abandons')); //This is the earliest anything can be placed in the <head>
 
-			add_filter('nebula_warnings', array($this, 'audit_mode_server_checks'));
+			add_action('nebula_options_saved', array($this, 'start_audit_mode'));
 			add_action('wp_footer', array($this, 'audit_mode_output'), 9999); //Late execution as possible
 
 
@@ -547,75 +547,23 @@ if ( !trait_exists('Companion_Utilities') ){
 			}
 		}
 
-
-
-
-
-
-		//Add more in-depth checks to Nebula Warnings when Audit Mode is enabled
-		public function audit_mode_server_checks($nebula_warnings){
+		//Start Audit Mode expiration transient when options saved
+		public function start_audit_mode(){
 			if ( nebula()->get_option('audit_mode') ){
-				//Search individual files for debug output
-				foreach ( nebula()->glob_r(get_stylesheet_directory() . '/*') as $filepath ){
-					if ( is_file($filepath) ){
-						$skip_filenames = array('README.md', 'debug_log', 'error_log', '/vendor', 'resources/');
-
-						if ( !nebula()->contains($filepath, nebula()->skip_extensions()) && !nebula()->contains($filepath, $skip_filenames) ){
-							if ( substr(basename($filepath), -3) == '.js' ){ //JavaScript files
-								$looking_for = "/console\./i";
-							} elseif ( substr(basename($filepath), -4) == '.php' ){ //PHP files
-								$looking_for = "/var_dump\(/i";
-							} elseif ( substr(basename($filepath), -5) == '.scss' ){ //Sass files
-								continue; //Remove this to allow checking scss files
-								$looking_for = "/@debug/i";
-							} else {
-								continue;
-							}
-
-							foreach ( file($filepath) as $line_number => $full_line ){
-								preg_match($looking_for, $full_line, $details);
-
-								if ( !empty($details) ){
-									$nebula_warnings[] = array(
-										'level' => 'warn',
-										'description' => 'Possible debug output in <strong>' . str_replace(get_stylesheet_directory(), '', dirname($filepath)) . '/' . basename($filepath) . '</strong> on <strong>line ' . $line_number . '</strong>.'
-									);
-								}
-							}
-						}
-					}
-				}
-
-				//Check for sitemap
-				if ( !nebula()->is_available(home_url('/') . 'sitemap_index.xml', false, true) ){
-					$nebula_warnings[] = array(
-						'level' => 'warn',
-						'description' => 'Missing sitemap XML'
-					);
-				}
-
-				//Check for Yoast active
-				if ( !is_plugin_active('wordpress-seo/wp-seo.php') ){
-					$nebula_warnings[] = array(
-						'level' => 'warn',
-						'description' => 'Yoast SEO plugin is not active'
-					);
-				}
+				set_transient('nebula_audit_mode_expiration', time(), HOUR_IN_SECONDS);
 			}
-
-			return $nebula_warnings;
 		}
 
-		//Check for some common issues pre-launch
+		//Audit Mode front-end output
 		public function audit_mode_output(){
-			if ( nebula()->get_option('audit_mode') ){
+			if ( nebula()->get_option('audit_mode') && !nebula()->is_admin_page() ){
 				//Automatically disable this option 1 hour after last usage
-				if ( current_user_can('manage_options') || nebula()->is_dev() ){ //If admin or dev user
-					set_transient('nebula_audit_mode_expiration', time(), HOUR_IN_SECONDS); //Extend audit mode to expire 1 hour from now
+				$nebula_audit_mode_expiration = get_transient('nebula_audit_mode_expiration');
+				if ( empty($nebula_audit_mode_expiration) ){
+					nebula()->update_option('audit_mode', 0); //Disable audit mode
 				} else {
-					$nebula_audit_mode_expiration = get_transient('nebula_audit_mode_expiration');
-					if ( empty($nebula_audit_mode_expiration) ){
-						nebula()->update_option('audit_mode', 0); //Disable audit mode
+					if ( current_user_can('manage_options') || nebula()->is_dev() ){ //If admin or dev user
+						set_transient('nebula_audit_mode_expiration', time(), HOUR_IN_SECONDS); //Extend audit mode to expire 1 hour from now
 					}
 				}
 
@@ -633,13 +581,22 @@ if ( !trait_exists('Companion_Utilities') ){
 						.audit-notice {position: relative; border: 2px solid blue;}
 							.audit-notice .audit-desc {background: blue;}
 						#audit-results {position: relative; background: #444; color: #fff; padding: 50px;}
+							#audit-results a {color: #0098d7;}
+								#audit-results a:hover {color: #95d600;}
 					</style>
 					<script>
 						jQuery(window).on('load', function(){
 							setTimeout(function(){
 								jQuery('body').append(jQuery('<div id="audit-results"><p><strong>Nebula Audit Results:</strong></p><ul></ul></div>'));
 
-								//Check performance timings... this is tough because this audit will increase load time itself...
+								//Check performance timings... this is tough because this audit will increase load time itself... Maybe a note?
+
+								//Check protocol
+								if ( window.location.href.indexOf('http://') === 0 ){
+									jQuery("#audit-results ul").append('<li>Non-secure http protocol</li>');
+								} else if ( window.location.href.indexOf('https://') === 0 ){
+									//check for non-secure resource requests here?
+								}
 
 								//Empty meta description
 								if ( !jQuery('meta[name="description"]').attr('content').length ){
@@ -681,19 +638,31 @@ if ( !trait_exists('Companion_Utilities') ){
 
 								//Broken images
 								jQuery('img').on('error', function(){
+									if ( jQuery(this).parents('#wpadminbar').length ){
+										return false;
+									}
+
 									jQuery(this).addClass('nebula-audit audit-error').append(jQuery('<div class="audit-desc">Broken image</div>'));
 									jQuery("#audit-results ul").append('<li>Broken image</li>');
 								});
 
 								//Check img alt
 								jQuery('img:not([alt]), img[alt=""]').each(function(){
+									if ( jQuery(this).parents('#wpadminbar').length ){
+										return false;
+									}
+
 									jQuery(this).wrap('<div class="nebula-audit audit-error"></div>').after('<div class="audit-desc">Missing ALT attribute</div>');
 									jQuery("#audit-results ul").append('<li>Missing ALT attribute</li>');
 								});
 
 								//Images
 								jQuery('img').each(function(){
-									//Check image filesize. Note: cached images are 0
+									if ( jQuery(this).parents('#wpadminbar').length ){
+										return false;
+									}
+
+									//Check image filesize. Note: cached files are 0
 									if ( window.performance ){ //IE10+
 										var iTime = performance.getEntriesByName(jQuery(this).attr('src'))[0];
 										if ( iTime && iTime.transferSize >= 500000 ){
@@ -715,12 +684,39 @@ if ( !trait_exists('Companion_Utilities') ){
 									}
 								});
 
-								//@todo: check video sizes too
-								//@todo: maybe offcanvas images?
+								//Videos
+								jQuery('video').each(function(){
+									//Check video filesize. Note: cached files are 0
+									if ( window.performance ){ //IE10+
+										var vTime = performance.getEntriesByName(jQuery(this).find('source').attr('src'))[0];
+
+										if ( vTime && vTime.transferSize >= 5000000 ){ //5mb+
+											jQuery(this).wrap('<div class="nebula-audit audit-warn"></div>').after('<div class="audit-desc">Video filesize over 5mb</div>');
+											jQuery("#audit-results ul").append('<li>Video filesize over 5mb</li>');
+										}
+									}
+								});
+
+								//Check Form Fields
+								jQuery('form').each(function(){
+									if ( jQuery(this).find('input[name=s]').length ){
+										return true;
+									}
+
+									var formFieldCount = 0;
+									jQuery(this).find('input:visible, textarea:visible, select:visible').each(function(){
+										formFieldCount++;
+									});
+
+									if ( formFieldCount > 6 ){
+										jQuery(this).wrap('<div class="nebula-audit audit-notice"></div>').after('<div class="audit-desc">Many form fields</div>');
+										jQuery("#audit-results ul").append('<li>Many form fields</li>');
+									}
+								});
 
 								var nebulaWarnings = <?php echo $nebula_warnings; ?> || {};
 								jQuery.each(nebulaWarnings, function(i, warning){
-									if ( warning.description.indexOf('Nebula Audit Mode') > 0 ){
+									if ( warning.description.indexOf('Audit Mode') > 0 ){
 										return true; //Skip
 									}
 									jQuery("#audit-results ul").append('<li>' + warning.description + '</li>');
@@ -732,8 +728,6 @@ if ( !trait_exists('Companion_Utilities') ){
 										jQuery("#audit-results ul").append('<li>Missing breadcrumb schema tag</li>');
 									}
 								<?php endif; ?>
-
-								//Missing sitemap? https://gearside.com/nebula/sitemap.xml
 
 								//Check issue count (do this last)
 								if ( jQuery("#audit-results ul li").length <= 0 ){

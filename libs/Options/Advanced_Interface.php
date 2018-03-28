@@ -66,10 +66,16 @@
 					<p class="option-keywords">moderate page speed impact</p>
 				</div>
 
+				<div class="form-group">
+					<input type="checkbox" name="nebula_options[advanced_warnings]" id="advanced_warnings" value="1" <?php checked('1', !empty($nebula_options['advanced_warnings'])); ?> /><label for="advanced_warnings">Advanced Warnings</label>
+					<p class="nebula-help-text short-help form-text text-muted">Check for more strict Nebula warnings. (Default: <?php echo nebula()->user_friendly_default('advanced_warnings'); ?>)</p>
+					<p class="nebula-help-text more-help form-text text-muted"></p>
+					<p class="option-keywords"></p>
+				</div>
 
 				<div class="form-group">
 					<input type="checkbox" name="nebula_options[audit_mode]" id="audit_mode" value="1" <?php checked('1', !empty($nebula_options['audit_mode'])); ?> /><label for="audit_mode">Audit Mode</label>
-					<p class="nebula-help-text short-help form-text text-muted">Visualize (at list) common issues on the front-end. (Default: <?php echo nebula()->user_friendly_default('audit_mode'); ?>)</p>
+					<p class="nebula-help-text short-help form-text text-muted">Visualize (and list) common issues on the front-end. (Default: <?php echo nebula()->user_friendly_default('audit_mode'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">This option automatically disables itself 1 hour after last use.</p>
 					<p class="option-keywords"></p>
 				</div>
@@ -103,7 +109,7 @@
 				</div>
 
 				<div class="form-group">
-					<label for="additional_design_references">Additional Design References</label>
+					<label for="additional_design_references">Additional Design Notes</label>
 					<textarea name="nebula_options[additional_design_references]" id="additional_design_references" class="form-control nebula-validate-textarea" rows="2"><?php echo $nebula_options['additional_design_references']; ?></textarea>
 					<p class="nebula-help-text short-help form-text text-muted">Add design references (such as links to brand guides) to the admin dashboard</p>
 					<p class="option-keywords"></p>
@@ -159,25 +165,6 @@
 					<p class="option-keywords"></p>
 				</div>
 			</div><!-- /option-group -->
-
-			<div class="option-group">
-				<h3>Examples</h3>
-
-				<div class="form-group">
-					<label for="example1">Example URL</label>
-					<input type="text" name="nebula_options[example1]" id="example1" class="form-control nebula-validate-url" value="<?php echo $nebula_options['example1']; ?>" placeholder="Yeah Whatever" />
-					<p class="nebula-help-text short-help form-text text-muted">Short help.</p>
-					<p class="nebula-help-text more-help form-text text-muted">Long Help</p>
-					<p class="option-keywords"></p>
-				</div>
-
-				<div class="form-group">
-					<input type="checkbox" name="nebula_options[example2]" id="example2" value="1" <?php checked('1', !empty($nebula_options['example2'])); ?> /><label for="example2">Example 2</label>
-					<p class="nebula-help-text short-help form-text text-muted">Short help. (Default: <?php echo nebula()->user_friendly_default('example2'); ?>)</p>
-					<p class="nebula-help-text more-help form-text text-muted">Long help</p>
-					<p class="option-keywords"></p>
-				</div>
-			</div>
 
 			<?php do_action('nebula_options_interface_advanced'); ?>
 		</div><!--/col-->

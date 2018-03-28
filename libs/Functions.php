@@ -39,20 +39,77 @@ trait Companion_Functions {
 	public function nebula_companion_warnings($nebula_warnings){
 		//If Audit Mode is enabled
 		if ( nebula()->get_option('audit_mode') ){
-			$nebula_pre_launch_audit_mode_expiration = get_transient('nebula_audit_mode_expiration');
-			if ( empty($nebula_pre_launch_audit_mode_expiration) ){
-				$nebula_pre_launch_audit_mode_expiration = time();
+			$nebula_audit_mode_expiration = get_transient('nebula_audit_mode_expiration');
+			if ( empty($nebula_audit_mode_expiration) ){
+				$nebula_audit_mode_expiration = time();
 			}
 
 			$nebula_warnings[] = array(
+				'category' => 'Nebula Companion',
 				'level' => 'error',
-				'description' => '<a href="themes.php?page=nebula_options&tab=advanced&option=pre_launch_audit_mode">Pre-Launch Audit Mode</a> is enabled! This is visible to all visitors. It will automatically be disabled in ' . human_time_diff($nebula_pre_launch_audit_mode_expiration+HOUR_IN_SECONDS) . '.'
+				'description' => '<a href="themes.php?page=nebula_options&tab=advanced&option=audit_mode">Audit Mode</a> is enabled! This is visible to all visitors. It will automatically be disabled in ' . human_time_diff($nebula_audit_mode_expiration+HOUR_IN_SECONDS) . '.'
 			);
+		}
+
+		//Strict warnings (also used with Audit Mode)
+		if ( nebula()->get_option('audit_mode') || nebula()->get_option('advanced_warnings') ){
+
+			if ( !nebula()->is_admin_page() ){ //Non-Admin page warnings only
+				//Search individual files for debug output
+				foreach ( nebula()->glob_r(get_stylesheet_directory() . '/*') as $filepath ){
+					if ( is_file($filepath) ){
+						$skip_filenames = array('README.md', 'debug_log', 'error_log', '/vendor', 'resources/');
+						if ( !nebula()->contains($filepath, nebula()->skip_extensions()) && !nebula()->contains($filepath, $skip_filenames) ){
+							if ( substr(basename($filepath), -3) == '.js' ){ //JavaScript files
+								$looking_for = "/console\./i";
+							} elseif ( substr(basename($filepath), -4) == '.php' ){ //PHP files
+								$looking_for = "/var_dump\(|var_export\(|print_r\(/i";
+							} elseif ( substr(basename($filepath), -5) == '.scss' ){ //Sass files
+								continue; //Remove this to allow checking scss files
+								$looking_for = "/@debug/i";
+							} else {
+								continue;
+							}
+
+							foreach ( file($filepath) as $line_number => $full_line ){
+								preg_match($looking_for, $full_line, $details);
+
+								if ( !empty($details) ){
+									$nebula_warnings[] = array(
+										'category' => 'Nebula Companion',
+										'level' => 'warn',
+										'description' => 'Possible debug output in <strong>' . str_replace(get_stylesheet_directory(), '', dirname($filepath)) . '/' . basename($filepath) . '</strong> on <strong>line ' . $line_number . '</strong>.'
+									);
+								}
+							}
+						}
+					}
+				}
+			}
+
+			//Check for sitemap
+			if ( !nebula()->is_available(home_url('/') . 'sitemap_index.xml', false, true) ){
+				$nebula_warnings[] = array(
+					'category' => 'Nebula Companion',
+					'level' => 'warn',
+					'description' => 'Missing sitemap XML'
+				);
+			}
+
+			//Check for Yoast active
+			if ( !is_plugin_active('wordpress-seo/wp-seo.php') ){
+				$nebula_warnings[] = array(
+					'category' => 'Nebula Companion',
+					'level' => 'warn',
+					'description' => 'Yoast SEO plugin is not active'
+				);
+			}
 		}
 
 		//If website is live and using Prototype Mode
 		if ( nebula()->is_site_live() && nebula()->get_option('prototype_mode') ){
 			$nebula_warnings[] = array(
+				'category' => 'Nebula Companion',
 				'level' => 'warn',
 				'description' => '<a href="themes.php?page=nebula_options&tab=advanced&option=prototype_mode">Prototype Mode</a> is enabled (' . ucwords($this->dev_phase()) . ')!'
 			);
@@ -61,6 +118,7 @@ trait Companion_Functions {
 		//If Prototype mode is disabled, but Multiple Theme plugin is still activated
 		if ( !nebula()->get_option('prototype_mode') && is_plugin_active('jonradio-multiple-themes/jonradio-multiple-themes.php') ){
 			$nebula_warnings[] = array(
+				'category' => 'Nebula Companion',
 				'level' => 'error',
 				'description' => '<a href="themes.php?page=nebula_options&tab=advanced&option=prototype_mode">Prototype Mode</a> is disabled, but <a href="plugins.php">Multiple Theme plugin</a> is still active.',
 				'url' => 'plugins.php'

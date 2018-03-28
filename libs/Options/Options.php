@@ -28,6 +28,7 @@ if ( !trait_exists('Companion_Options') ){
 			$default_options['design_reference_metabox'] = 0;
 			$default_options['design_reference_link'] = '';
 			$default_options['additional_design_references'] = '';
+			$default_options['advanced_warnings'] = 0;
 			$default_options['audit_mode'] = 0;
 
 			return $default_options;

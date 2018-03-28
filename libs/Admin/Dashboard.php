@@ -58,10 +58,11 @@ if ( !trait_exists('Companion_Dashboard') ){
 
 		//Add a Github metabox for recently updated issues
 		public function github_metabox(){
-			$repo_name = str_replace('https://github.com/', '', nebula()->get_option('github_url'));
-
-			global $wp_meta_boxes;
-			wp_add_dashboard_widget('nebula_github', '<i class="fab fa-fw fa-github"></i>&nbsp;' . $repo_name, array($this, 'dashboard_nebula_github'));
+			if ( nebula()->get_option('github_url') ){
+				$repo_name = str_replace('https://github.com/', '', nebula()->get_option('github_url'));
+				global $wp_meta_boxes;
+				wp_add_dashboard_widget('nebula_github', '<i class="fab fa-fw fa-github"></i>&nbsp;' . $repo_name, array($this, 'dashboard_nebula_github'));
+			}
 		}
 
 		public function dashboard_nebula_github(){
