@@ -556,7 +556,7 @@ if ( !trait_exists('Companion_Utilities') ){
 
 		//Audit Mode front-end output
 		public function audit_mode_output(){
-			if ( nebula()->get_option('audit_mode') && !nebula()->is_admin_page() ){
+			if ( (nebula()->get_option('audit_mode') || (isset($_GET['audit']) && nebula()->is_dev())) && !nebula()->is_admin_page() ){
 				//Automatically disable this option 1 hour after last usage
 				$nebula_audit_mode_expiration = get_transient('nebula_audit_mode_expiration');
 				if ( empty($nebula_audit_mode_expiration) ){
@@ -722,7 +722,7 @@ if ( !trait_exists('Companion_Utilities') ){
 									jQuery("#audit-results ul").append('<li>' + warning.description + '</li>');
 								});
 
-								<?php if ( !is_home() ): ?>
+								<?php if ( !(is_home() || is_front_page()) ): ?>
 									//Check breadcrumb schema tag
 									if ( !jQuery('[itemtype*=BreadcrumbList]').length ){
 										jQuery("#audit-results ul").append('<li>Missing breadcrumb schema tag</li>');

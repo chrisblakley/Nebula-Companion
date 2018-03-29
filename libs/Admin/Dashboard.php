@@ -66,8 +66,8 @@ if ( !trait_exists('Companion_Dashboard') ){
 		}
 
 		public function dashboard_nebula_github(){
-			$client_id = ''; //get this from Advanced nebula options
-			$client_secret = ''; //get this from Advanced nebula options
+			$client_id = ''; //@todo: get this from Advanced nebula options
+			$client_secret = ''; //@todo: get this from Advanced nebula options
 			if ( !empty($client_id) && !empty($client_secret) ){
 				$url = add_query_arg(array(
 					'client_id' => $client_id,
@@ -81,7 +81,6 @@ if ( !trait_exists('Companion_Dashboard') ){
 			$github_commit_json = get_transient('nebula_github_commits');
 			if ( empty($github_commit_json) || nebula()->is_debug() ){
 				$response = nebula()->remote_get('https://api.github.com/repos/' . $repo_name . '/commits');
-
 				if ( is_wp_error($response) ){
 			        echo '<p>There was an error retrieving the Github commits...</p>';
 			        return false;
@@ -94,7 +93,17 @@ if ( !trait_exists('Companion_Dashboard') ){
 			$commits = json_decode($github_commit_json);
 
 			if ( !empty($commits->message) ){
-				echo '<p><strong>This repo was not found.</strong><br />If this is a private repo, the <strong>Client ID</strong> and <strong>Client Secret</strong> from your Github app must be added in <a href="themes.php?page=nebula_options&tab=functions&option=comments">Nebula Options</a> to retrieve issues.</p>'; //@todo: update the option
+				?>
+					<p>
+						<strong>This repo was not found.</strong><br />
+						If this is a private repo, the <strong>Client ID</strong> and <strong>Client Secret</strong> from your Github app must be added in <a href="themes.php?page=nebula_options&tab=functions&option=comments">Nebula Options</a> to retrieve issues.
+					</p>
+					<p>
+						<a href="<?php echo nebula()->get_option('github_url'); ?>" target="_blank">Github Repository &raquo;</a><br />
+						<a href="<?php echo nebula()->get_option('github_url'); ?>/commits/master" target="_blank">Commits &raquo;</a><br />
+						<a href="<?php echo nebula()->get_option('github_url'); ?>/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc" target="_blank">Issues &raquo;</a><br />
+					</p>
+				<?php
 				return false;
 			}
 
@@ -114,9 +123,6 @@ if ( !trait_exists('Companion_Dashboard') ){
 			$github_issues_json = get_transient('nebula_github_issues');
 			if ( empty($github_issues_json) || nebula()->is_debug() ){
 				$response = nebula()->remote_get('https://api.github.com/repos/' . $repo_name . '/issues?sort=updated');
-
-				//$response = nebula()->remote_get('https://api.github.com/repos/PinckneyHugoGroup/Dwyer-Strategy/issues?sort=updated'); //delete this
-
 				if ( is_wp_error($response) ){
 			        echo '<p>There was an error retrieving the Github issues...</p>';
 			        return false;

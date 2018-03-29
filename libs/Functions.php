@@ -38,7 +38,7 @@ trait Companion_Functions {
 	//Add more warnings to the Nebula check
 	public function nebula_companion_warnings($nebula_warnings){
 		//If Audit Mode is enabled
-		if ( nebula()->get_option('audit_mode') ){
+		if ( nebula()->get_option('audit_mode') || (isset($_GET['audit']) && nebula()->is_dev()) ){
 			$nebula_audit_mode_expiration = get_transient('nebula_audit_mode_expiration');
 			if ( empty($nebula_audit_mode_expiration) ){
 				$nebula_audit_mode_expiration = time();
