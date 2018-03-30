@@ -33,20 +33,22 @@ if ( !trait_exists('Companion_Dashboard') ){
 			$secondary_hex = get_theme_mod('nebula_secondary_color', nebula()->sass_color('secondary'));
 			$secondary_rgb = $this->hex2rgb($secondary_hex);
 			?>
-				<div style="display: flex; align-items: center; margin-bottom: 10px;">
-					<a href="https://www.webpagefx.com/web-design/hex-to-rgb/<?php echo $primary_hex; ?>" target="_blank" style="display: block; width: 50px; height: 50px; background: <?php echo $primary_hex; ?>; margin-right: 10px;"></a>
-					<div>
-						<strong>Primary Color</strong><br />
-						Hex <?php echo $primary_hex; ?><br />
-						RGB <?php echo $primary_rgb['r'] . ', ' . $primary_rgb['g'] . ', ' . $primary_rgb['b']; ?><br />
+				<div style="display: flex; flex-wrap: wrap;">
+					<div style="display: flex; align-items: center; margin-bottom: 10px; margin-right: 25px;">
+						<a href="https://www.webpagefx.com/web-design/hex-to-rgb/<?php echo $primary_hex; ?>" target="_blank" style="display: block; width: 50px; height: 50px; background: <?php echo $primary_hex; ?>; margin-right: 6px;"></a>
+						<div>
+							<strong>Primary Color</strong><br />
+							Hex <?php echo $primary_hex; ?><br />
+							RGB <?php echo $primary_rgb['r'] . ', ' . $primary_rgb['g'] . ', ' . $primary_rgb['b']; ?><br />
+						</div>
 					</div>
-				</div>
-				<div style="display: flex; align-items: center; margin-bottom: 10px;">
-					<a href="https://www.webpagefx.com/web-design/hex-to-rgb/<?php echo $secondary_hex; ?>" target="_blank" style="display: block; width: 50px; height: 50px; background: <?php echo $secondary_hex; ?>; margin-right: 10px;"></a>
-					<div>
-						<strong>Secondary Color</strong><br />
-						Hex <?php echo $secondary_hex; ?><br />
-						RGB <?php echo $secondary_rgb['r'] . ', ' . $secondary_rgb['g'] . ', ' . $secondary_rgb['b']; ?><br />
+					<div style="display: flex; align-items: center; margin-bottom: 10px;">
+						<a href="https://www.webpagefx.com/web-design/hex-to-rgb/<?php echo $secondary_hex; ?>" target="_blank" style="display: block; width: 50px; height: 50px; background: <?php echo $secondary_hex; ?>; margin-right: 6px;"></a>
+						<div>
+							<strong>Secondary Color</strong><br />
+							Hex <?php echo $secondary_hex; ?><br />
+							RGB <?php echo $secondary_rgb['r'] . ', ' . $secondary_rgb['g'] . ', ' . $secondary_rgb['b']; ?><br />
+						</div>
 					</div>
 				</div>
 			<?php
@@ -75,6 +77,8 @@ if ( !trait_exists('Companion_Dashboard') ){
 				), $url);
 			}
 
+			echo '<p><a href="' . nebula()->get_option('github_url') . '" target="_blank">Github Repository &raquo;</a></p>';
+
 			$repo_name = str_replace('https://github.com/', '', nebula()->get_option('github_url'));
 
 			//Commits
@@ -95,11 +99,10 @@ if ( !trait_exists('Companion_Dashboard') ){
 			if ( !empty($commits->message) ){
 				?>
 					<p>
-						<strong>This repo was not found.</strong><br />
+						<strong>This repo is not available.</strong><br />
 						If this is a private repo, the <strong>Client ID</strong> and <strong>Client Secret</strong> from your Github app must be added in <a href="themes.php?page=nebula_options&tab=functions&option=comments">Nebula Options</a> to retrieve issues.
 					</p>
 					<p>
-						<a href="<?php echo nebula()->get_option('github_url'); ?>" target="_blank">Github Repository &raquo;</a><br />
 						<a href="<?php echo nebula()->get_option('github_url'); ?>/commits/master" target="_blank">Commits &raquo;</a><br />
 						<a href="<?php echo nebula()->get_option('github_url'); ?>/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc" target="_blank">Issues &raquo;</a><br />
 					</p>

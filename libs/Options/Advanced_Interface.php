@@ -62,15 +62,15 @@
 				<div class="form-group">
 					<input type="checkbox" name="nebula_options[check_tor]" id="check_tor" value="1" <?php checked('1', !empty($nebula_options['check_tor'])); ?> /><label for="check_tor">Check for Tor browser</label>
 					<p class="nebula-help-text short-help form-text text-muted">Include Tor in browser checks. (Default: <?php echo nebula()->user_friendly_default('check_tor'); ?>)</p>
-					<p class="nebula-help-text more-help form-text text-muted">Long help</p>
+					<p class="nebula-help-text more-help form-text text-muted"></p>
 					<p class="option-keywords">moderate page speed impact</p>
 				</div>
 
 				<div class="form-group">
 					<input type="checkbox" name="nebula_options[advanced_warnings]" id="advanced_warnings" value="1" <?php checked('1', !empty($nebula_options['advanced_warnings'])); ?> /><label for="advanced_warnings">Advanced Warnings</label>
 					<p class="nebula-help-text short-help form-text text-muted">Check for more strict Nebula warnings. (Default: <?php echo nebula()->user_friendly_default('advanced_warnings'); ?>)</p>
-					<p class="nebula-help-text more-help form-text text-muted"></p>
-					<p class="option-keywords"></p>
+					<p class="nebula-help-text more-help form-text text-muted">This will cause slightly longer page load times for admins and developers.</p>
+					<p class="option-keywords">minor page speed impact</p>
 				</div>
 
 				<div class="form-group">
