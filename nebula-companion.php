@@ -3,20 +3,22 @@
 Plugin Name: Nebula Companion
 Plugin URI: https://gearside.com/nebula/
 Description: Advanced features for use with the Nebula theme
-Version: 5.10.29.9751
+Version: 5.11.1.6893
 Author: Chris Blakley
 Author URI: https://gearside.com/nebula
 */
 
 if ( !class_exists('Nebula_Companion') ){
 	//Require Nebula libraries
-	require_once plugin_dir_path(__FILE__) . '/libs/Options/Options.php';
-	require_once plugin_dir_path(__FILE__) . '/libs/Utilities/Utilities.php';
-	require_once plugin_dir_path(__FILE__) . '/libs/Functions.php';
-	require_once plugin_dir_path(__FILE__) . '/libs/Admin/Admin.php';
-	require_once plugin_dir_path(__FILE__) . '/libs/Prototyping.php';
+	require_once plugin_dir_path(__FILE__) . 'libs/Scripts.php';
+	require_once plugin_dir_path(__FILE__) . 'libs/Options/Options.php';
+	require_once plugin_dir_path(__FILE__) . 'libs/Utilities/Utilities.php';
+	require_once plugin_dir_path(__FILE__) . 'libs/Functions.php';
+	require_once plugin_dir_path(__FILE__) . 'libs/Admin/Admin.php';
+	require_once plugin_dir_path(__FILE__) . 'libs/Prototyping.php';
 
 	class Nebula_Companion {
+		use Companion_Scripts { Companion_Scripts::hooks as Companion_ScriptHooks; }
 		use Companion_Options { Companion_Options::hooks as Companion_OptionsHooks; }
 		use Companion_Utilities { Companion_Utilities::hooks as Companion_UtilitiesHooks; }
 		use Companion_Functions { Companion_Functions::hooks as Companion_FunctionsHooks; }
@@ -39,7 +41,8 @@ if ( !class_exists('Nebula_Companion') ){
 
 		//Setup plugin constants
 		private function constants(){
-			$this->plugin_directory = plugin_dir_path(__FILE__);
+			$this->plugin_directory = plugin_dir_path(__FILE__); //This DOES have a trailing slash
+			$this->plugin_directory_uri = plugin_dir_url(__FILE__); //This DOES have a trailing slash
 		}
 
 		//Set variables
@@ -50,6 +53,7 @@ if ( !class_exists('Nebula_Companion') ){
 
 		//Run action and filter hooks
 		private function hooks(){
+			$this->Companion_ScriptHooks(); //Register Scripts hooks
 			$this->Companion_OptionsHooks(); //Register Options hooks
 			$this->Companion_UtilitiesHooks(); //Register Utilities hooks
 			$this->Companion_FunctionsHooks(); //Register Functions hooks

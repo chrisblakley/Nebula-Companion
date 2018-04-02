@@ -5,7 +5,18 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Companion_Sass') ){
 	trait Companion_Sass {
 		public function hooks(){
+			add_filter('nebula_scss_locations', array($this, 'companion_sass_locations'));
 			add_action('nebula_before_sass_compile', array($this, 'combine_dev_stylesheets'));
+		}
+
+		public function companion_sass_locations($scss_locations){
+			$scss_locations['companion'] = array(
+				'directory' => $this->plugin_directory,
+				'uri' => $this->plugin_directory_uri,
+				'imports' => array($this->plugin_directory . 'assets/scss/partials/')
+			);
+
+			return $scss_locations;
 		}
 
 		//Combine developer stylesheets
@@ -40,15 +51,15 @@ if ( !trait_exists('Companion_Sass') ){
 					if ( is_file($file) && in_array($file_path_info['extension'], array('css', 'scss')) ){
 						$file_counter++;
 
-						//Include partials in dev.scss //@todo "Nebula" 0: Find a way to prevent hard-coding these partial files. Maybe tap into the $location_paths['imports'] from above (need a specific order other than alphabetical?)?
+						//Include partials in dev.scss
 						if ( $file_counter === 1 ){
 							$import_partials = '';
-							$import_partials .= "@import '../../../../Nebula-master/assets/scss/partials/variables';\r\n";
-							$import_partials .= "@import '../partials/variables';\r\n";
-							$import_partials .= "@import '../../../../Nebula-master/assets/scss/partials/mixins';\r\n";
-							$import_partials .= "@import '../../../../Nebula-master/assets/scss/partials/helpers';\r\n";
+							$import_partials .= '@import "' . get_template_directory() . '/assets/scss/partials/variables;"' . PHP_EOL;
+							$import_partials .= '@import "../partials/variables";' . PHP_EOL;
+							$import_partials .= '@import "' . get_template_directory() . '/assets/scss/partials/mixins;"' . PHP_EOL;
+							$import_partials .= '@import "' . get_template_directory() . '/assets/scss/partials/helpers;"' . PHP_EOL;
 
-							$wp_filesystem->put_contents($dev_scss_file, $automation_warning . $import_partials . "\r\n");
+							$wp_filesystem->put_contents($dev_scss_file, $automation_warning . $import_partials . PHP_EOL);
 						}
 
 						$this_scss_contents = $wp_filesystem->get_contents($file); //Copy file contents

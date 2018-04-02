@@ -3,12 +3,14 @@
 if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
 if ( !trait_exists('Companion_Utilities') ){
-	require_once plugin_dir_path(__FILE__) . '/Sass.php';
+	require_once plugin_dir_path(__FILE__) . 'Sass.php';
 
 	trait Companion_Utilities {
 		use Companion_Sass { Companion_Sass::hooks as Companion_SassHooks;}
 
 		public function hooks(){
+			$this->Companion_SassHooks(); //Register Sass hooks
+
 			add_filter('nebula_preconnect', array($this, 'additional_preconnects'));
 			add_filter('nebula_get_browser', array($this, 'check_tor_is_browser'));
 			add_filter('nebula_session_id', array($this, 'add_session_id_parameter'));
@@ -21,7 +23,6 @@ if ( !trait_exists('Companion_Utilities') ){
 
 			add_action('nebula_options_saved', array($this, 'start_audit_mode'));
 			add_action('wp_footer', array($this, 'audit_mode_output'), 9999); //Late execution as possible
-
 
 
 
@@ -562,8 +563,8 @@ if ( !trait_exists('Companion_Utilities') ){
 				if ( empty($nebula_audit_mode_expiration) ){
 					nebula()->update_option('audit_mode', 0); //Disable audit mode
 				} else {
-					if ( current_user_can('manage_options') || nebula()->is_dev() ){ //If admin or dev user
-						set_transient('nebula_audit_mode_expiration', time(), HOUR_IN_SECONDS); //Extend audit mode to expire 1 hour from now
+					if ( !isset($_GET['audit']) && current_user_can('manage_options') || nebula()->is_dev() ){ //If admin or dev user
+						set_transient('nebula_audit_mode_expiration', time(), HOUR_IN_SECONDS); //Extend audit mode to expire 1 hour from now (only if not using temporary "audit" query string)
 					}
 				}
 
@@ -635,6 +636,17 @@ if ( !trait_exists('Companion_Utilities') ){
 								} else if ( jQuery('h2') <= 2 ){
 									jQuery("#audit-results ul").append('<li>Very few H2 tags</li>');
 								}
+
+								//Check for placeholder text (in the page content and metadata)
+								var entireDOM = jQuery('html').clone();
+								entireDOM.find('#qm, #wpadminbar, script, #audit-results').remove(); //Remove elements to ignore (must ignore scripts so this audit doesn't find itself)
+								var commonPlaceholderWords = ['lorem', 'ipsum', 'dolor', 'amet', 'consectetur', 'adipiscing', 'elit'];
+								jQuery.each(commonPlaceholderWords, function(i, word){
+									if ( entireDOM.html().indexOf(word) > -1 ){
+										jQuery("#audit-results ul").append('<li>Placeholder text found.</li>');
+										return false;
+									}
+								});
 
 								//Broken images
 								jQuery('img').on('error', function(){

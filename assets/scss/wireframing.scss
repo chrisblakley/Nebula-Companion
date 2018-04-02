@@ -1,5 +1,5 @@
-@import 'variables';
-@import 'mixins';
+@import $parent_partials_directory + 'variables';
+@import $parent_partials_directory + 'mixins';
 
 body.nebula-wireframing-wireframe {@include prefix((filter: grayscale(100%)));} //Greyscale only when wireframe is active and being viewed
 

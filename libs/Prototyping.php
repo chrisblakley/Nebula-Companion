@@ -72,7 +72,7 @@ if ( !trait_exists('Companion_Prototyping') ){
 
 			$wp_admin_bar->add_node(array(
 				'id' => 'nebula-prototype',
-				'title' => '<i class="far fa-fw fa-sitemap" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Prototype' . $wireframe_menu_title,
+				'title' => '<i class="nebula-admin-fa far fa-fw fa-sitemap"></i> Prototype' . $wireframe_menu_title,
 				'href' => get_admin_url() . 'themes.php?page=nebula_options&tab=functions&option=prototype_mode'
 			));
 
@@ -83,7 +83,7 @@ if ( !trait_exists('Companion_Prototyping') ){
 					$wp_admin_bar->add_node(array(
 						'parent' => 'nebula-prototype',
 						'id' => 'nebula-wireframe-activate',
-						'title' => '<i class="nebula-admin-fa far fa-fw fa-flag" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> View Wireframe &raquo;',
+						'title' => '<i class="nebula-admin-fa far fa-fw fa-flag"></i> View Wireframe &raquo;',
 						'href' => $permalink . '?phase=wireframe',
 					));
 				}
@@ -92,7 +92,7 @@ if ( !trait_exists('Companion_Prototyping') ){
 					$wp_admin_bar->add_node(array(
 						'parent' => 'nebula-prototype',
 						'id' => 'nebula-staging-activate',
-						'title' => '<i class="nebula-admin-fa far fa-fw fa-flag" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> View Staging Site &raquo;',
+						'title' => '<i class="nebula-admin-fa far fa-fw fa-flag"></i> View Staging Site &raquo;',
 						'href' => $permalink . '?phase=staging',
 					));
 				}
@@ -101,7 +101,7 @@ if ( !trait_exists('Companion_Prototyping') ){
 					$wp_admin_bar->add_node(array(
 						'parent' => 'nebula-prototype',
 						'id' => 'nebula-production-activate',
-						'title' => '<i class="nebula-admin-fa far fa-fw fa-flag-checkered" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> View Production Site &raquo;',
+						'title' => '<i class="nebula-admin-fa far fa-fw fa-flag-checkered"></i> View Production Site &raquo;',
 						'href' => $permalink . '?phase=production',
 					));
 				}
@@ -110,7 +110,7 @@ if ( !trait_exists('Companion_Prototyping') ){
 			$wp_admin_bar->add_node(array(
 				'parent' => 'nebula-prototype',
 				'id' => 'nebula-prototype-help',
-				'title' => '<i class="nebula-admin-fa far fa-fw fa-question" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Help & Documentation &raquo;',
+				'title' => '<i class="nebula-admin-fa far fa-fw fa-question"></i> Help & Documentation &raquo;',
 				'href' => 'https://gearside.com/nebula/functions/fpo/?utm_campaign=documentation&utm_medium=admin+bar&utm_source=prototyping+help',
 				'meta' => array('target' => '_blank', 'rel' => 'noopener')
 			));
@@ -196,8 +196,8 @@ if ( !trait_exists('Companion_Prototyping') ){
 			if ( $bg === 'placeholder' ){
 				$bg = '';
 				$placeholder = '<svg x="0px" y="0px" width="100%" height="100%" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 1px solid #aaa; z-index: 1;">
-			<line fill="none" stroke="#aaa" stroke-miterlimit="10" x1="0" y1="0" x2="100%" y2="100%"/>
-			<line fill="none" stroke="#aaa" stroke-miterlimit="10" x1="100%" y1="0" x2="0" y2="100%"/>
+			<line fill="none" stroke="#aaa" stroke-miterlimit="10" x1="0" y1="0" x2="100%" y2="100%" />
+			<line fill="none" stroke="#aaa" stroke-miterlimit="10" x1="100%" y1="0" x2="0" y2="100%" />
 		</svg>';
 			} else {
 				$placeholder = '';
@@ -236,7 +236,7 @@ if ( !trait_exists('Companion_Prototyping') ){
 			}
 
 			if ( empty($imgsrc) ){
-				$return = "background: url('data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' x=\'0px\' y=\'0px\' width=\'100%\' height=\'100%\'><line fill=\'none\' stroke=\'" . $color . "\' stroke-miterlimit=\'10\' x1=\'0\' y1=\'0\' x2=\'100%\' y2=\'100%\'/><line fill=\'none\' stroke=\'" . $color . "\' stroke-miterlimit=\'10\' x1=\'100%\' y1=\'0\' x2=\'0\' y2=\'100%\'/></svg>') no-repeat; border: 1px solid " . $color . ";";
+				$return = "background: url('data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' x=\'0px\' y=\'0px\' width=\'100%\' height=\'100%\'><line fill=\'none\' stroke=\'" . $color . "\' stroke-miterlimit=\'10\' x1=\'0\' y1=\'0\' x2=\'100%\' y2=\'100%\'/><line fill=\'none\' stroke=\'" . $color . "\' stroke-miterlimit=\'10\' x1=\'100%\' y1=\'0\' x2=\'0\' y2=\'100%\' /></svg>') no-repeat; border: 1px solid " . $color . ";";
 			} else {
 				$return = "background: url('" . $imgsrc . "') no-repeat; background-size: cover;";
 			}
@@ -279,8 +279,8 @@ if ( !trait_exists('Companion_Prototyping') ){
 
 			if ( $imgsrc == '' ){
 				$return .= '<svg x="0px" y="0px" width="100%" height="100%" style="border: 1px solid ' . $color . ';">
-			<line fill="none" stroke="' . $color . '" stroke-miterlimit="10" x1="0" y1="0" x2="100%" y2="100%"/>
-			<line fill="none" stroke="' . $color . '" stroke-miterlimit="10" x1="100%" y1="0" x2="0" y2="100%"/>
+			<line fill="none" stroke="' . $color . '" stroke-miterlimit="10" x1="0" y1="0" x2="100%" y2="100%" />
+			<line fill="none" stroke="' . $color . '" stroke-miterlimit="10" x1="100%" y1="0" x2="0" y2="100%" />
 		</svg>';
 			}
 			$return .= '</div>';

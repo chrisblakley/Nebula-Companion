@@ -1,6 +1,5 @@
 <?php
 
-//Exit if accessed directly
 if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
 if ( !trait_exists('Companion_Dashboard') ){
@@ -33,17 +32,17 @@ if ( !trait_exists('Companion_Dashboard') ){
 			$secondary_hex = get_theme_mod('nebula_secondary_color', nebula()->sass_color('secondary'));
 			$secondary_rgb = $this->hex2rgb($secondary_hex);
 			?>
-				<div style="display: flex; flex-wrap: wrap;">
-					<div style="display: flex; align-items: center; margin-bottom: 10px; margin-right: 25px;">
-						<a href="https://www.webpagefx.com/web-design/hex-to-rgb/<?php echo $primary_hex; ?>" target="_blank" style="display: block; width: 50px; height: 50px; background: <?php echo $primary_hex; ?>; margin-right: 6px;"></a>
+				<div class="nebula-metabox-row">
+					<div class="design-reference-col">
+						<a class="color-block primary" href="https://www.webpagefx.com/web-design/hex-to-rgb/<?php echo $primary_hex; ?>" target="_blank">T</a>
 						<div>
 							<strong>Primary Color</strong><br />
 							Hex <?php echo $primary_hex; ?><br />
 							RGB <?php echo $primary_rgb['r'] . ', ' . $primary_rgb['g'] . ', ' . $primary_rgb['b']; ?><br />
 						</div>
 					</div>
-					<div style="display: flex; align-items: center; margin-bottom: 10px;">
-						<a href="https://www.webpagefx.com/web-design/hex-to-rgb/<?php echo $secondary_hex; ?>" target="_blank" style="display: block; width: 50px; height: 50px; background: <?php echo $secondary_hex; ?>; margin-right: 6px;"></a>
+					<div class="design-reference-col">
+						<a class="color-block secondary" href="https://www.webpagefx.com/web-design/hex-to-rgb/<?php echo $secondary_hex; ?>" target="_blank">T</a>
 						<div>
 							<strong>Secondary Color</strong><br />
 							Hex <?php echo $secondary_hex; ?><br />
@@ -110,18 +109,25 @@ if ( !trait_exists('Companion_Dashboard') ){
 				return false;
 			}
 
-			echo '<p><strong>Latest Commit</strong></p>';
+			echo '<div class="nebula-metabox-row"><div class="nebula-metabox-col">';
+			echo '<strong>Latest Commits</strong><br />';
 
 			//https://developer.github.com/v3/repos/commits/
-			$commit_date_time = strtotime($commits[0]->commit->committer->date);
-			$commit_date_icon = ( date('Y-m-d', $commit_date_time) === date('Y-m-d') )? 'fa-clock' : 'fa-calendar';
-			echo '<p>
-				<i class="far fa-fw ' . $commit_date_icon . '"></i> <a href="' . $commits[0]->html_url . '" target="_blank" title="' . date('F j, Y @ g:ia', $commit_date_time) . '">' . human_time_diff($commit_date_time) . ' ago</a> <small>by ' . $commits[0]->commit->committer->name . '</small><br />
-				<small style="display: block;">' . nebula()->excerpt(array('text' => $commits[0]->commit->message, 'words' => 15, 'ellipsis' => true, 'more' => false)) . '</small>
-			</p>';
+			for ( $i=0; $i <= 2; $i++ ){ //Get 3 commits
+				$commit_date_time = strtotime($commits[$i]->commit->committer->date);
+				$commit_date_icon = ( date('Y-m-d', $commit_date_time) === date('Y-m-d') )? 'fa-clock' : 'fa-calendar';
+				echo '<p>
+					<i class="far fa-fw ' . $commit_date_icon . '"></i> <a href="' . $commits[$i]->html_url . '" target="_blank" title="' . date('F j, Y @ g:ia', $commit_date_time) . '">' . human_time_diff($commit_date_time) . ' ago</a><br />
+					<small style="display: block;">' . nebula()->excerpt(array('text' => $commits[$i]->commit->message, 'words' => 15, 'ellipsis' => true, 'more' => false)) . '</small>
+				</p>';
+			}
+
+			echo '<p><small><a href="' . nebula()->get_option('github_url') . '/commits/master" target="_blank">View all commits &raquo;</a></small></p>';
+			echo '</div>';
 
 			//Issues
-			echo '<p><strong>Recently Updated Issues</strong></p>';
+			echo '<div class="nebula-metabox-col">';
+			echo '<strong>Recently Updated Issues</strong><br />';
 
 			$github_issues_json = get_transient('nebula_github_issues');
 			if ( empty($github_issues_json) || nebula()->is_debug() ){
@@ -136,26 +142,20 @@ if ( !trait_exists('Companion_Dashboard') ){
 			}
 
 			$issues = json_decode($github_issues_json);
-			$issue_count = 0;
 
 			//https://developer.github.com/v3/issues/
 			if ( !empty($issues) ){
 				echo '<ul>';
-				foreach ( $issues as $issue ){
-					$issue_date_time = strtotime($issue->updated_at);
+				for ( $i=0; $i <= 2; $i++ ){ //Get 3 issues
+					$issue_date_time = strtotime($issues[$i]->updated_at);
 					$issue_date_icon = ( date('Y-m-d', $issue_date_time) === date('Y-m-d') )? 'fa-clock' : 'fa-calendar';
 
 					echo '<li>
 						<p>
-							<a href="' . $issue->html_url . '" target="_blank">' . $issue->title . '</a><br />
+							<a href="' . $issues[$i]->html_url . '" target="_blank">' . $issues[$i]->title . '</a><br />
 							<small><i class="far fa-fw ' . $issue_date_icon . '"></i> <span title="' . date('F j, Y @ g:ia', $issue_date_time) . '">' . human_time_diff($issue_date_time) . ' ago</span></small>
 						</p>
 					</li>';
-
-					$issue_count++;
-					if ( $issue_count >= 3 ){
-						break;
-					}
 				}
 				echo '</ul>';
 			} else {
@@ -163,6 +163,7 @@ if ( !trait_exists('Companion_Dashboard') ){
 			}
 
 			echo '<p><small><a href="' . nebula()->get_option('github_url') . '/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc" target="_blank">View all issues &raquo;</a></small></p>';
+			echo '</div></div>';
 		}
 
 		//Add more data to the user dashboard

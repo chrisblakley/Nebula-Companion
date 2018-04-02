@@ -44,15 +44,31 @@ trait Companion_Functions {
 				$nebula_audit_mode_expiration = time();
 			}
 
-			$nebula_warnings[] = array(
-				'category' => 'Nebula Companion',
-				'level' => 'error',
-				'description' => '<a href="themes.php?page=nebula_options&tab=advanced&option=audit_mode">Audit Mode</a> is enabled! This is visible to all visitors. It will automatically be disabled in ' . human_time_diff($nebula_audit_mode_expiration+HOUR_IN_SECONDS) . '.'
-			);
+			if ( nebula()->get_option('audit_mode') ){
+				$nebula_warnings[] = array(
+					'category' => 'Nebula Companion',
+					'level' => 'error',
+					'description' => '<a href="themes.php?page=nebula_options&tab=advanced&option=audit_mode">Audit Mode</a> is enabled! This is visible to all visitors. It will automatically be disabled in ' . human_time_diff($nebula_audit_mode_expiration+HOUR_IN_SECONDS) . '.',
+					'url' => get_admin_url() . 'themes.php?page=nebula_options&tab=advanced&option=audit_mode'
+				);
+			}
 		}
 
 		//Strict warnings (also used with Audit Mode)
 		if ( nebula()->get_option('audit_mode') || nebula()->get_option('advanced_warnings') ){
+			//Check contact email address
+			if ( !nebula()->get_option('contact_email') ){
+				$default_contact_email = get_option('admin_email', nebula()->get_user_info('user_email', array('id' => 1)));
+				$email_domain = substr($default_contact_email, strpos($default_contact_email, "@")+1);
+				if ( $email_domain != nebula()->url_components('domain') ){
+					$nebula_warnings[] = array(
+						'category' => 'Nebula Companion',
+						'level' => 'warn',
+						'description' => 'Default contact email domain does not match website. This email address will appear in metadata, so please verify this is acceptable.',
+						'url' => get_admin_url() . 'themes.php?page=nebula_options&tab=metadata&option=contact_email'
+					);
+				}
+			}
 
 			if ( !nebula()->is_admin_page() ){ //Non-Admin page warnings only
 				//Search individual files for debug output
@@ -101,7 +117,8 @@ trait Companion_Functions {
 				$nebula_warnings[] = array(
 					'category' => 'Nebula Companion',
 					'level' => 'warn',
-					'description' => 'Yoast SEO plugin is not active'
+					'description' => 'Yoast SEO plugin is not active',
+					'url' => get_admin_url() . 'themes.php?page=tgmpa-install-plugins'
 				);
 			}
 		}
@@ -111,7 +128,8 @@ trait Companion_Functions {
 			$nebula_warnings[] = array(
 				'category' => 'Nebula Companion',
 				'level' => 'warn',
-				'description' => '<a href="themes.php?page=nebula_options&tab=advanced&option=prototype_mode">Prototype Mode</a> is enabled (' . ucwords($this->dev_phase()) . ')!'
+				'description' => '<a href="themes.php?page=nebula_options&tab=advanced&option=prototype_mode">Prototype Mode</a> is enabled (' . ucwords($this->dev_phase()) . ')!',
+				'url' => get_admin_url() . 'themes.php?page=nebula_options&tab=advanced&option=prototype_mode'
 			);
 		}
 
@@ -121,7 +139,7 @@ trait Companion_Functions {
 				'category' => 'Nebula Companion',
 				'level' => 'error',
 				'description' => '<a href="themes.php?page=nebula_options&tab=advanced&option=prototype_mode">Prototype Mode</a> is disabled, but <a href="plugins.php">Multiple Theme plugin</a> is still active.',
-				'url' => 'plugins.php'
+				'url' => get_admin_url() . 'plugins.php'
 			);
 		}
 
