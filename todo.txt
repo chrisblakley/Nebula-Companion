@@ -1,1 +1,0 @@
-- If using Sass files in this plugin, be sure to register with Nebula's Sass compiler so it knows those files exist

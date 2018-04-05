@@ -572,9 +572,9 @@ if ( !trait_exists('Companion_Utilities') ){
 				?>
 					<style>
 						.nebula-audit .audit-desc {position: absolute; bottom: 0; right: 0; color: #fff; background: grey; font-size: 10px; padding: 3px 5px; z-index: 9999;}
-							.nebula-audit .nebula-audit .audit-desc {right: auto; left: 0;}
-								.nebula-audit .nebula-audit .nebula-audit .audit-desc {right: 0; left: auto; bottom: auto; top: 0;}
-									.nebula-audit .nebula-audit .nebula-audit .nebula-audit .audit-desc {right: auto; left: 0; bottom: auto; top: 0;}
+							.nebula-audit .nebula-audit .audit-desc {right: auto; left: 0; top: 0; bottom: auto;}
+								.nebula-audit .nebula-audit .nebula-audit .audit-desc {right: auto; left: 0; bottom: 0; top: auto;}
+									.nebula-audit .nebula-audit .nebula-audit .nebula-audit .audit-desc {right: 0; left: auto; bottom: auto; top: 0;}
 						.audit-error {position: relative; border: 2px solid red;}
 							.audit-error .audit-desc {background: red;}
 						.audit-warn {position: relative; border: 2px solid orange;}
