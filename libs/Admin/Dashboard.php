@@ -34,7 +34,7 @@ if ( !trait_exists('Companion_Dashboard') ){
 			?>
 				<div class="nebula-metabox-row">
 					<div class="design-reference-col">
-						<a class="color-block primary" href="https://www.webpagefx.com/web-design/hex-to-rgb/<?php echo $primary_hex; ?>" target="_blank">T</a>
+						<a class="color-block primary" href="https://www.colorhexa.com/<?php echo ltrim($primary_hex, '#'); ?>" target="_blank">T</a>
 						<div>
 							<strong>Primary Color</strong><br />
 							Hex <?php echo $primary_hex; ?><br />
@@ -42,7 +42,7 @@ if ( !trait_exists('Companion_Dashboard') ){
 						</div>
 					</div>
 					<div class="design-reference-col">
-						<a class="color-block secondary" href="https://www.webpagefx.com/web-design/hex-to-rgb/<?php echo $secondary_hex; ?>" target="_blank">T</a>
+						<a class="color-block secondary" href="https://www.colorhexa.com/<?php echo ltrim($secondary_hex, '#'); ?>" target="_blank">T</a>
 						<div>
 							<strong>Secondary Color</strong><br />
 							Hex <?php echo $secondary_hex; ?><br />
