@@ -637,6 +637,14 @@ if ( !trait_exists('Companion_Utilities') ){
 									jQuery("#audit-results ul").append('<li>Very few H2 tags</li>');
 								}
 
+								//Check that each <section> and <article> have a heading tag
+								jQuery('section, article').each(function(){
+									if ( !jQuery(this).find('h1, h2, h3, h4, h5, h6').length ){
+										jQuery(this).addClass('nebula-audit audit-warn').append(jQuery('<div class="audit-desc">Missing heading tag in this section/article</div>'));
+										jQuery("#audit-results ul").append('<li>Mising heading tag within a &lt;section&gt; or &lt;article&gt; tag.</li>');
+									}
+								});
+
 								//Check for placeholder text (in the page content and metadata)
 								var entireDOM = jQuery('html').clone();
 								entireDOM.find('#qm, #wpadminbar, script, #audit-results').remove(); //Remove elements to ignore (must ignore scripts so this audit doesn't find itself)
@@ -743,7 +751,7 @@ if ( !trait_exists('Companion_Utilities') ){
 
 								//Check issue count (do this last)
 								if ( jQuery("#audit-results ul li").length <= 0 ){
-									jQuery("#audit-results").append('<p><strong><i class="fas fa-fw fa-check"></i> No issues were found on this page.</strong> Be sure to check others (and run <a href="https://gearside.com/nebula/get-started/checklists/testing-checklist/" target="_blank">more authoritative tests</a>)!</p>');
+									jQuery("#audit-results").append('<p><strong><i class="fas fa-fw fa-check"></i> No issues were found on this page.</strong> Be sure to check other pages (and run <a href="https://gearside.com/nebula/get-started/checklists/testing-checklist/" target="_blank">more authoritative tests</a>)!</p>');
 								} else {
 									jQuery("#audit-results").append('<p><strong><i class="fas fa-fw fa-times"></i> Found issues: ' + jQuery("#audit-results ul li").length + '<strong></p>');
 								}

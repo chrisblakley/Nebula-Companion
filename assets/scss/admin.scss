@@ -3,7 +3,7 @@
 @import $parent_partials_directory + '/helpers';
 
 //Design Reference metabox
-.design-reference-col {display: flex; align-items: center; margin-bottom: 10px; margin-right: 25px;
+.design-reference-col {display: flex; align-items: center; margin-bottom: 10px; margin-right: 20px;
 	.color-block {display: block; width: 50px; height: 50px; font-family: serif; font-size: 21px; text-align: center; line-height: 50px; margin-right: 6px;
 		&.primary {background: $primary_color; color: readable-color($primary_color);}
 		&.secondary {background: $secondary_color; color: readable-color($secondary_color);}
