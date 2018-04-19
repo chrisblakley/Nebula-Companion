@@ -715,6 +715,12 @@ if ( !trait_exists('Companion_Utilities') ){
 											jQuery("#audit-results ul").append('<li>Video filesize over 5mb</li>');
 										}
 									}
+
+									//Check unmuted autoplay
+									if ( jQuery(this).is('[autoplay]') && !jQuery(this).is('[muted]') ){
+										jQuery(this).wrap('<div class="nebula-audit audit-warn"></div>').after('<div class="audit-desc">Autoplay without muted attribute</div>');
+										jQuery("#audit-results ul").append('<li>Videos set to autoplay without being muted will not autoplay in Chrome.</li>');
+									}
 								});
 
 								//Check Form Fields

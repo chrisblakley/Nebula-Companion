@@ -55,11 +55,8 @@ if ( !trait_exists('Companion_Options') ){
 		public function companion_options_metaboxes(){
 			$current_screen = get_current_screen();
 			if ( $current_screen->base === 'appearance_page_nebula_options' ){
-				//Functions
 				add_meta_box('nebula_companion_detection_metabox', 'Detection', array($this, 'nebula_companion_detection_metabox'), 'nebula_options', 'functions');
-				add_meta_box('nebula_companion_prototyping_metabox', 'Prototyping', array($this, 'nebula_companion_prototyping_metabox'), 'nebula_options', 'functions_side');
-
-				//Administration
+				add_meta_box('nebula_companion_prototyping_metabox', 'Prototyping', array($this, 'nebula_companion_prototyping_metabox'), 'nebula_options', 'advanced');
 				add_meta_box('nebula_companion_design_references_metabox', 'Design References', array($this, 'nebula_companion_design_references_metabox'), 'nebula_options', 'administration');
 			}
 		}
