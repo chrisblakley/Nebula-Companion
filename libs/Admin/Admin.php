@@ -19,15 +19,6 @@ if ( !trait_exists('Companion_Admin') ){
 			}
 		}
 
-		//Check for plugin updates
-		public function plugin_json(){
-			require_once(get_template_directory() . '/inc/vendor/plugin-update-checker/plugin-update-checker.php'); //Use the library in the Nebula theme itself
-			$plugin_update_checker = Puc_v4_Factory::buildUpdateChecker(
-				'https://raw.githubusercontent.com/chrisblakley/Nebula-Companion/master/inc/nebula_plugin.json',
-				$this->plugin_directory . 'nebula-companion.php',
-				'Nebula-Companion'
-			);
-		}
 
 		//Top-level companion admin bar menu items
 		public function companion_admin_bar_menus($wp_admin_bar){
@@ -37,6 +28,32 @@ if ( !trait_exists('Companion_Admin') ){
 				'title' => '<i class="nebula-admin-fa fas fa-fw fa-list-alt"></i> Audit This Page',
 				'href' => esc_url(add_query_arg('audit', 'true')),
 			));
+		}
+
+		//Check for plugin updates
+		public function plugin_json(){
+			if ( $this->allow_plugin_update() ){
+				require_once(get_template_directory() . '/inc/vendor/plugin-update-checker/plugin-update-checker.php'); //Use the library in the Nebula theme itself
+				$plugin_update_checker = Puc_v4_Factory::buildUpdateChecker(
+					'https://raw.githubusercontent.com/chrisblakley/Nebula-Companion/master/inc/nebula_plugin.json',
+					$this->plugin_directory . 'nebula-companion.php',
+					'Nebula-Companion'
+				);
+			}
+		}
+
+		//Check if automated Nebula Companion plugin updates are allowed
+		public function allow_plugin_update(){
+			if ( !nebula()->get_option('plugin_update_notification') ){
+				return false;
+			}
+
+			$nebula_data = get_option('nebula_data');
+			if ( $nebula_data['version_legacy'] === 'true' ){
+				return false;
+			}
+
+			return true;
 		}
 	}
 }
