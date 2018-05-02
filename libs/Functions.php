@@ -54,6 +54,18 @@ trait Companion_Functions {
 			}
 		}
 
+		//Audit mode only warnings
+		if ( nebula()->get_option('audit_mode') ){
+			//Remind to check incognito
+			if ( is_plugin_active('query-monitor/query-monitor.php') && nebula()->get_option('jquery_version') === 'footer' ){
+				$nebula_warnings[] = array(
+					'category' => 'Nebula Companion',
+					'level' => 'warn',
+					'description' => 'Plugins may move jQuery back to the head. Be sure to check incognito for JavaScript errors.',
+				);
+			}
+		}
+
 		//Strict warnings (also used with Audit Mode)
 		if ( nebula()->get_option('audit_mode') || nebula()->get_option('advanced_warnings') ){
 			//Check contact email address
