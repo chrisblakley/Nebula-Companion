@@ -11,20 +11,22 @@ if ( !trait_exists('Companion_Options') ){
 			add_action('nebula_options_interface_additional_panes', array($this, 'add_advanced_option_pane'));
 
 			add_action('admin_head', array($this, 'companion_options_metaboxes'));
+			add_action('nebula_options_assets_metabox', array($this, 'use_companion_script'));
 			add_filter('nebula_options_interface_preset_filters', array($this, 'companion_preset_option_filters'));
 			add_action('nebula_options_frontend_metabox', array($this, 'companion_dev_stylesheets_option'));
 			add_action('nebula_options_admin_notifications_metabox', array($this, 'companion_plugin_update_option'));
+			add_action('nebula_options_custom_dimensions_metabox', array($this, 'companion_ga_dimensions'));
 		}
 
 		//Add Nebula Companion options
 		public function companion_default_options($default_options){
-			$default_options['example1'] = '';
-			$default_options['example2'] = 0;
-
+			$default_options['use_companion_script'] = 0;
 			$default_options['ip_geolocation'] = 0;
 			$default_options['dev_stylesheets'] = 0;
 			$default_options['weather'] = 0;
+			$default_options['advanced_form_identification'] = 0;
 			$default_options['ga_load_abandon'] = 0;
+			$default_options['cd_privacymode'] = '';
 			$default_options['prototype_mode'] = 0;
 			$default_options['wireframe_theme'] = '';
 			$default_options['staging_theme'] = '';
@@ -62,6 +64,16 @@ if ( !trait_exists('Companion_Options') ){
 		 ===========================*/
 
 		//Add individual options to existing Nebula metaboxes
+		public function use_companion_script($nebula_options){
+			?>
+				<div class="form-group">
+					<input type="checkbox" name="nebula_options[use_companion_script]" id="use_companion_script" value="1" <?php checked('1', !empty($nebula_options['use_companion_script'])); ?> /><label for="use_companion_script">Use Companion Script</label>
+					<p class="nebula-help-text short-help form-text text-muted">Enables the companion.js file for additional functionality. (Default: <?php echo nebula()->user_friendly_default('use_companion_script'); ?>)</p>
+					<p class="nebula-help-text more-help form-text text-muted"></p>
+					<p class="option-keywords">moderate page speed impact companion</p>
+				</div>
+			<?php
+		}
 
 		public function companion_dev_stylesheets_option($nebula_options){
 			?>
@@ -81,6 +93,26 @@ if ( !trait_exists('Companion_Options') ){
 					<p class="nebula-help-text short-help form-text text-muted">Enable easy updates to the Nebula Companion plugin. (Default: <?php echo nebula()->user_friendly_default('plugin_update_notification'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted"></p>
 					<p class="option-keywords">discretionary companion</p>
+				</div>
+			<?php
+		}
+
+		public function companion_ga_dimensions($nebula_options){
+			$dimension_regex = '^dimension([0-9]{1,3})$';
+
+			?>
+				<div class="option-sub-group">
+					<h4>Advanced Data</h4>
+					<div class="form-group">
+						<div class="input-group">
+							<div class="input-group-prepend">
+								<div class="input-group-text">Privacy Mode</div>
+							</div>
+							<input type="text" name="nebula_options[cd_privacymode]" id="cd_privacymode" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_privacymode']; ?>" />
+						</div>
+						<p class="nebula-help-text short-help form-text text-muted">Stores the browsing mode the site is being accessed using (Ex: Normal or Private). Scope: Session</p>
+						<p class="option-keywords"></p>
+					</div>
 				</div>
 			<?php
 		}
@@ -122,6 +154,14 @@ if ( !trait_exists('Companion_Options') ){
 					<p class="nebula-help-text short-help form-text text-muted">Include Tor in browser checks. (Default: <?php echo nebula()->user_friendly_default('check_tor'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted"></p>
 					<p class="option-keywords">moderate page speed impact companion</p>
+				</div>
+
+				<div class="form-group" dependent-or="use_companion_script">
+					<input type="checkbox" name="nebula_options[advanced_form_identification]" id="advanced_form_identification" value="1" <?php checked('1', !empty($nebula_options['advanced_form_identification'])); ?> /><label for="advanced_form_identification">Real-time Form Identification</label>
+					<p class="nebula-help-text short-help form-text text-muted">Use advanced methods of identification to send to the CRM. (Default: <?php echo nebula()->user_friendly_default('advanced_form_identification'); ?>)</p>
+					<p class="dependent-note hidden">This option is dependent on the use of companion.js.</p>
+					<p class="nebula-help-text more-help form-text text-muted">This includes the use of query parameters and real-time form input listeners.</p>
+					<p class="option-keywords">gdpr hubspot</p>
 				</div>
 
 				<div class="form-group">

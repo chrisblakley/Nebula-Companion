@@ -24,7 +24,7 @@ if ( !trait_exists('Companion_Utilities') ){
 			add_action('nebula_options_saved', array($this, 'start_audit_mode'));
 			add_action('wp_footer', array($this, 'audit_mode_output'), 9999); //Late execution as possible
 
-
+			add_action('nebula_ga_before_send_pageview', array($this, 'analytics_before_pageview'));
 
 
 
@@ -521,6 +521,28 @@ if ( !trait_exists('Companion_Utilities') ){
 			}
 		}
 
+		//Additional Google Analytics detections
+		public function analytics_before_pageview(){
+			//Detect privacy mode
+			if ( nebula()->get_option('cd_privacymode') ){
+				?>
+					var fileSystem = window.RequestFileSystem || window.webkitRequestFileSystem;
+					if ( fileSystem ){
+						fileSystem(
+							window.TEMPORARY,
+							100,
+							function(){
+								ga('set', nebula.analytics.dimensions.browseMode, 'Normal');
+							},
+							function(){
+								ga('set', nebula.analytics.dimensions.browseMode, 'Private');
+							}
+						);
+					}
+				<?php
+			}
+		}
+
 		//Visualize max scroll percent by adding ?max=16.12 to the URL
 		public function visualize_scroll_percent(){
 			if ( isset($_GET['max_scroll']) && nebula()->is_staff() ){
@@ -638,10 +660,10 @@ if ( !trait_exists('Companion_Utilities') ){
 								}
 
 								//Check that each <section> and <article> have a heading tag
-								jQuery('section, article').each(function(){
+								jQuery('article').each(function(){
 									if ( !jQuery(this).find('h1, h2, h3, h4, h5, h6').length ){
-										jQuery(this).addClass('nebula-audit audit-warn').append(jQuery('<div class="audit-desc">Missing heading tag in this section/article</div>'));
-										jQuery("#audit-results ul").append('<li>Mising heading tag within a &lt;section&gt; or &lt;article&gt; tag.</li>');
+										jQuery(this).addClass('nebula-audit audit-warn').append(jQuery('<div class="audit-desc">Missing heading tag in this article</div>'));
+										jQuery("#audit-results ul").append('<li>Mising heading tag within an &lt;article&gt; tag.</li>');
 									}
 								});
 

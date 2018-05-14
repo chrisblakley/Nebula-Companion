@@ -82,6 +82,44 @@ trait Companion_Functions {
 				}
 			}
 
+
+
+
+
+
+
+			//Check each image within the_content()
+				//If CMYK: https://stackoverflow.com/questions/8646924/how-can-i-check-if-a-given-image-is-cmyk-in-php
+				//If not Progressive JPEG
+				//If Quality setting is over 80%: https://stackoverflow.com/questions/2024947/is-it-possible-to-tell-the-quality-level-of-a-jpeg
+
+			if ( 1==2 ){ //if post or page or custom post type? maybe not- just catch everything
+				$post = get_post(get_the_ID());
+				preg_match_all('/src="([^"]*)"/', $post->post_content, $matches); //Find images in the content... This wont work: I need the image path not url
+
+				foreach ( $matches as $image_url ){
+					//Check CMYK
+					$image_info = getimagesize($image_url);
+					var_dump($image_info); echo '<br>';
+					if ( $image_info['channels'] == 4 ){
+						echo 'it is cmyk<br><br>'; //ADD WARNING HERE
+					} else {
+						echo 'it is rgb<br><br>';
+					}
+				}
+
+			}
+
+
+
+
+
+
+
+
+
+
+
 			if ( !nebula()->is_admin_page() ){ //Non-Admin page warnings only
 				//Search individual files for debug output
 				foreach ( nebula()->glob_r(get_stylesheet_directory() . '/*') as $filepath ){
