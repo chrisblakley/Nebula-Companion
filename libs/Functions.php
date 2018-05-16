@@ -8,6 +8,7 @@ trait Companion_Functions {
 
 		add_filter('nebula_warnings', array($this, 'nebula_companion_warnings'));
 		add_filter('wpcf7_special_mail_tags', array($this, 'cf7_companion_special_mail_tags'), 10, 3);
+		add_filter('nebula_cf7_debug_data', array($this, 'nebula_companion_cf7_debug_data'));
 	}
 
 	//Add more CF7 special mail tags
@@ -15,6 +16,16 @@ trait Companion_Functions {
 		$submission = WPCF7_Submission::get_instance();
 		if ( !$submission ){
 			return $output;
+		}
+
+		//IP Geolocation
+		if ( $name === '_nebula_ip_geo' ){
+			if ( $this->ip_location() ){
+				$ip_location = $this->ip_location('all');
+				return $ip_location->city . ', ' . $ip_location->region_name;
+			} else {
+				return '';
+			}
 		}
 
 		//Weather
@@ -34,6 +45,20 @@ trait Companion_Functions {
 
 		return $output;
 	}
+
+
+
+	public function nebula_companion_cf7_debug_data($debug_data){
+
+		if ( $this->ip_location() ){
+			$ip_location = $this->ip_location('all');
+			$debug_data .= 'IP Geolocation: ' . $ip_location->city . ', ' . $ip_location->region_name . '<br>';
+		}
+
+		return $debug_data;
+	}
+
+
 
 	//Add more warnings to the Nebula check
 	public function nebula_companion_warnings($nebula_warnings){
