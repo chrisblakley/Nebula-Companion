@@ -26,7 +26,7 @@ if ( !trait_exists('Companion_Utilities') ){
 
 			add_action('nebula_ga_before_send_pageview', array($this, 'analytics_before_pageview'));
 
-
+			add_filter('nebula_poi', array($this, 'log_provided_poi'));
 
 
 
@@ -197,6 +197,33 @@ if ( !trait_exists('Companion_Utilities') ){
 			}
 
 			return false;
+		}
+
+		//Log provided POIs
+		public function log_provided_poi($ip){
+			$log_file = get_stylesheet_directory() . '/notable_pois.log';
+
+			//Check if poi query string exists
+			if ( isset($_GET['poi']) ){
+				$ip_logged = file_put_contents($log_file, nebula()->get_ip_address() . ' ' . $_GET['poi'] . PHP_EOL, FILE_APPEND | LOCK_EX); //Log the notable POI. Can't use WP_Filesystem here.
+				return str_replace(array('%20', '+'), ' ', $_GET['poi']);
+			}
+		}
+
+		//Loop through Notable POIs log file (updated when using poi query parameter above).
+		public function search_poi_logs($notable_pois){
+			//Only use when manageable file size.
+			if ( file_exists($log_file) && filesize($log_file) < 10000 ){ //If log file exists and is less than 10kb
+				foreach ( array_unique(file($log_file)) as $line ){
+					$ip_info = explode(' ', strip_tags($line), 2); //0 = IP Address or RegEx pattern, 1 = Name
+					$notable_pois[] = array(
+						'ip' => $ip_info[0],
+						'name' => $ip_info[1]
+					);
+				}
+			}
+
+			return $notable_pois;
 		}
 
 		//Detect weather for Zip Code (using Yahoo! Weather)
