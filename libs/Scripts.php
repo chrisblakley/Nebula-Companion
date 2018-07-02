@@ -48,7 +48,6 @@ if ( !trait_exists('Companion_Scripts') ){
 
 			//Stylesheets
 			wp_enqueue_style('nebula-companion-admin');
-			wp_enqueue_style('nebula-companion-flags');
 		}
 
 		//Prep companion assets to lazy load too

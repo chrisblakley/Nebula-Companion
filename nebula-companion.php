@@ -3,10 +3,18 @@
 Plugin Name: Nebula Companion
 Plugin URI: https://gearside.com/nebula/
 Description: Advanced features for use with the Nebula theme.
-Version: 6.0.19.5129
+Version: 6.2.2.3996
 Author: Chris Blakley
 Author URI: https://gearside.com/nebula
 */
+
+//If Nebula is not active, leave this file.
+$active_theme = wp_get_theme();
+if ( $active_theme->get('Template') == 'Nebula-master' || $active_theme->get('Name') == 'Nebula' || $active_theme->get('Name') == 'Nebula Child' ){
+	//Continue into the file.
+} else {
+	return;
+}
 
 if ( !class_exists('Nebula_Companion') ){
 	//Require Nebula libraries

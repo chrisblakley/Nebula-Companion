@@ -26,10 +26,10 @@ if ( !trait_exists('Companion_Dashboard') ){
 				echo '<p><i class="fas fa-fw fa-file-image"></i> <a href="' . nebula()->get_option('design_reference_link') . '" target="_blank">Design File(s) &raquo;</a></p>';
 			}
 
-			$primary_hex = get_theme_mod('nebula_primary_color', nebula()->sass_color('primary'));
+			$primary_hex = rtrim(get_theme_mod('nebula_primary_color', nebula()->sass_color('primary')), ';');
 			$primary_rgb = $this->hex2rgb($primary_hex);
 
-			$secondary_hex = get_theme_mod('nebula_secondary_color', nebula()->sass_color('secondary'));
+			$secondary_hex = rtrim(get_theme_mod('nebula_secondary_color', nebula()->sass_color('secondary')), ';');
 			$secondary_rgb = $this->hex2rgb($secondary_hex);
 			?>
 				<div class="nebula-metabox-row">
@@ -173,7 +173,7 @@ if ( !trait_exists('Companion_Dashboard') ){
 				$ip_location = $this->ip_location('all');
 
 				if ( !empty($ip_location) ){
-					echo '<li><i class="fas fa-fw fa-location-arrow"></i> IP Location: <i class="flag flag-' . strtolower($ip_location->country_code) . '"></i> <strong>' . $ip_location->city . ', ' . $ip_location->region_name . '</strong></li>';
+					echo '<li><i class="fas fa-fw fa-location-arrow"></i> IP Location: ' . $ip_location->location->country_flag_emoji . ' <strong>' . $ip_location->city . ', ' . $ip_location->region_name . '</strong></li>';
 				} else {
 					echo '<li><i class="fas fa-fw fa-location-arrow"></i> IP Location: <em>GeoIP error or rate limit exceeded.</em></li>';
 				}

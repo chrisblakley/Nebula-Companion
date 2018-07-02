@@ -1,4 +1,5 @@
 @import $parent_partials_directory + '/variables';
+@import $child_partials_directory + '/variables';
 @import $parent_partials_directory + '/mixins';
 @import $parent_partials_directory + '/helpers';
 

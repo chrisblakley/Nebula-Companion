@@ -16,12 +16,13 @@ if ( !trait_exists('Companion_Options') ){
 			add_action('nebula_options_frontend_metabox', array($this, 'companion_dev_stylesheets_option'));
 			add_action('nebula_options_admin_notifications_metabox', array($this, 'companion_plugin_update_option'));
 			add_action('nebula_options_custom_dimensions_metabox', array($this, 'companion_ga_dimensions'));
+			add_action('nebula_options_apis_metabox', array($this, 'companion_apis'));
 		}
 
 		//Add Nebula Companion options
 		public function companion_default_options($default_options){
 			$default_options['use_companion_script'] = 0;
-			$default_options['ip_geolocation'] = 0;
+			$default_options['ip_geo_api'] = '';
 			$default_options['dev_stylesheets'] = 0;
 			$default_options['weather'] = 0;
 			$default_options['advanced_form_identification'] = 0;
@@ -70,7 +71,7 @@ if ( !trait_exists('Companion_Options') ){
 					<input type="checkbox" name="nebula_options[use_companion_script]" id="use_companion_script" value="1" <?php checked('1', !empty($nebula_options['use_companion_script'])); ?> /><label for="use_companion_script">Use Companion Script</label>
 					<p class="nebula-help-text short-help form-text text-muted">Enables the companion.js file for additional functionality. (Default: <?php echo nebula()->user_friendly_default('use_companion_script'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted"></p>
-					<p class="option-keywords">moderate page speed impact companion</p>
+					<p class="option-keywords">moderate page speed impact companion script</p>
 				</div>
 			<?php
 		}
@@ -127,19 +128,25 @@ if ( !trait_exists('Companion_Options') ){
 			}
 		}
 
+		public function companion_apis($nebula_options){
+			?>
+				<div class="form-group">
+					<label for="ip_geo_api">IP Geolocation API Key</label>
+					<input type="text" name="nebula_options[ip_geo_api]" id="ip_geo_api" class="form-control" value="<?php echo $nebula_options['ip_geo_api']; ?>" />
+					<p class="nebula-help-text short-help form-text text-muted">Lookup the country, region, and city of the user based on their IP address by entering your API key from <a href="https://ipstack.com/signup/free" target="_blank">IP Stack</a>.</p>
+					<p class="option-keywords">location remote resource moderate page speed impact companion</p>
+				</div>
+			<?php
+		}
+
 		public function nebula_companion_detection_metabox($nebula_options){
 			?>
 				<div class="form-group" dependent-or="ga_tracking_id">
 					<input type="checkbox" name="nebula_options[ga_load_abandon]" id="ga_load_abandon" value="1" <?php checked('1', !empty($nebula_options['ga_load_abandon'])); ?> /><label for="ga_load_abandon">Load Abandonment Tracking</label>
 					<p class="nebula-help-text short-help form-text text-muted">Track when visitors leave the page before it finishes loading. (Default: <?php echo nebula()->user_friendly_default('ga_load_abandon'); ?>)</p>
+					<p class="dependent-note hidden">This option is dependent on a Google Analytics Tracking ID</p>
 					<p class="nebula-help-text more-help form-text text-muted">This is implemented outside of the typical event tracking and because this event happens before the pageview is sent it will slightly alter user/session data (more users than sessions). It is recommended to create a View (and/or a segment) in Google Analytics specific to tracking load abandonment and filter out these hits from the primary reporting view (<code>Sessions > Exclude > Event Category > contains > Load Abandon</code>).</p>
 					<p class="option-keywords">companion</p>
-				</div>
-
-				<div class="form-group">
-					<input type="checkbox" name="nebula_options[ip_geolocation]" id="ip_geolocation" value="1" <?php checked('1', !empty($nebula_options['ip_geolocation'])); ?> /><label for="ip_geolocation">IP Geolocation</label>
-					<p class="nebula-help-text short-help form-text text-muted">Lookup the country, region, and city of the user based on their IP address. (Default: <?php echo nebula()->user_friendly_default('ip_geolocation'); ?>)</p>
-					<p class="option-keywords">location remote resource moderate page speed impact companion</p>
 				</div>
 
 				<div class="form-group">
@@ -159,9 +166,9 @@ if ( !trait_exists('Companion_Options') ){
 				<div class="form-group" dependent-or="use_companion_script">
 					<input type="checkbox" name="nebula_options[advanced_form_identification]" id="advanced_form_identification" value="1" <?php checked('1', !empty($nebula_options['advanced_form_identification'])); ?> /><label for="advanced_form_identification">Real-time Form Identification</label>
 					<p class="nebula-help-text short-help form-text text-muted">Use advanced methods of identification to send to the CRM. (Default: <?php echo nebula()->user_friendly_default('advanced_form_identification'); ?>)</p>
-					<p class="dependent-note hidden">This option is dependent on the use of companion.js.</p>
+					<p class="dependent-note hidden">This option is dependent on the use of the companion script (companion.js).</p>
 					<p class="nebula-help-text more-help form-text text-muted">This includes the use of query parameters and real-time form input listeners.</p>
-					<p class="option-keywords">gdpr hubspot</p>
+					<p class="option-keywords">gdpr hubspot companion script</p>
 				</div>
 
 				<div class="form-group">
@@ -223,6 +230,7 @@ if ( !trait_exists('Companion_Options') ){
                         <?php endforeach; ?>
 					</select>
 					<p class="nebula-help-text short-help form-text text-muted">The theme to use as the wireframe. Viewing this theme will trigger a greyscale view.</p>
+					<p class="dependent-note hidden">This option is dependent on Prototype Mode.</p>
 					<p class="option-keywords">companion</p>
 				</div>
 
@@ -235,6 +243,7 @@ if ( !trait_exists('Companion_Options') ){
                         <?php endforeach; ?>
 					</select>
 					<p class="nebula-help-text short-help form-text text-muted">The theme to use for staging new features. This is useful for site development after launch.</p>
+					<p class="dependent-note hidden">This option is dependent on Prototype Mode.</p>
 					<p class="option-keywords">companion</p>
 				</div>
 
@@ -247,6 +256,7 @@ if ( !trait_exists('Companion_Options') ){
                         <?php endforeach; ?>
 					</select>
 					<p class="nebula-help-text short-help form-text text-muted">The theme to use for production/live. This theme will become the live site.</p>
+					<p class="dependent-note hidden">This option is dependent on Prototype Mode.</p>
 					<p class="option-keywords">companion</p>
 				</div>
 			<?php

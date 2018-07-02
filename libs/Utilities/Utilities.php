@@ -110,7 +110,7 @@ if ( !trait_exists('Companion_Utilities') ){
 
 		//Detect location from IP address using https://freegeoip.net/
 		public function ip_location($data=null, $ip_address=false){
-			if ( nebula()->get_option('ip_geolocation') ){
+			if ( nebula()->get_option('ip_geo_api') ){
 				if ( empty($ip_address) ){
 					$ip_address = nebula()->get_ip_address();
 
@@ -129,7 +129,7 @@ if ( !trait_exists('Companion_Utilities') ){
 
 					//Get new remote data
 					if ( empty($_SESSION['nebula_ip_geolocation']) ){
-						$response = nebula()->remote_get('http://freegeoip.net/json/' . $ip_address);
+						$response = nebula()->remote_get('http://api.ipstack.com/' . $ip_address . '?access_key=' . nebula()->get_option('ip_geo_api') . '&format=1');
 						if ( is_wp_error($response) || !is_array($response) || strpos($response['body'], 'Rate limit') === 0 ){
 							return false;
 						}
@@ -154,7 +154,11 @@ if ( !trait_exists('Companion_Utilities') ){
 								return $ip_geo_data->country_name;
 								break;
 							case 'countrycode':
+							case 'countryabbr':
 								return $ip_geo_data->country_code;
+								break;
+							case 'flag':
+								return $ip_geo_data->location->country_flag_emoji;
 								break;
 							case 'region':
 							case 'state':
@@ -164,14 +168,15 @@ if ( !trait_exists('Companion_Utilities') ){
 								break;
 							case 'regioncode':
 							case 'statecode':
-								return $ip_geo_data->country_code;
+							case 'stateabbr':
+								return $ip_geo_data->region_code;
 								break;
 							case 'city':
 								return $ip_geo_data->city;
 								break;
 							case 'zip':
 							case 'zipcode':
-								return $ip_geo_data->zip_code;
+								return $ip_geo_data->zip;
 								break;
 							case 'lat':
 							case 'latitude':
@@ -649,11 +654,15 @@ if ( !trait_exists('Companion_Utilities') ){
 								}
 
 								//Empty meta description
-								if ( !jQuery('meta[name="description"]').attr('content').length ){
+								if ( !jQuery('meta[name="description"]').length ){
 									jQuery("#audit-results ul").append('<li>Missing meta description</li>');
 								} else {
-									if ( jQuery('meta[name="description"]').attr('content').length < 60 ){
-										jQuery("#audit-results ul").append('<li>Short meta description</li>');
+									if ( !jQuery('meta[name="description"]').attr('content').length ){
+										jQuery("#audit-results ul").append('<li>Meta description tag exists but is empty</li>');
+									} else {
+										if ( jQuery('meta[name="description"]').attr('content').length < 60 ){
+											jQuery("#audit-results ul").append('<li>Short meta description</li>');
+										}
 									}
 								}
 
@@ -686,7 +695,7 @@ if ( !trait_exists('Companion_Utilities') ){
 									jQuery("#audit-results ul").append('<li>Very few H2 tags</li>');
 								}
 
-								//Check that each <section> and <article> have a heading tag
+								//Check that each <article> has a heading tag
 								jQuery('article').each(function(){
 									if ( !jQuery(this).find('h1, h2, h3, h4, h5, h6').length ){
 										jQuery(this).addClass('nebula-audit audit-warn').append(jQuery('<div class="audit-desc">Missing heading tag in this article</div>'));
@@ -717,7 +726,7 @@ if ( !trait_exists('Companion_Utilities') ){
 
 								//Check img alt
 								jQuery('img:not([alt]), img[alt=""]').each(function(){
-									if ( jQuery(this).parents('#wpadminbar').length ){
+									if ( jQuery(this).parents('#wpadminbar, iframe, #map_canvas').length ){
 										return false;
 									}
 
@@ -727,7 +736,7 @@ if ( !trait_exists('Companion_Utilities') ){
 
 								//Images
 								jQuery('img').each(function(){
-									if ( jQuery(this).parents('#wpadminbar').length ){
+									if ( jQuery(this).parents('#wpadminbar, iframe, #map_canvas').length ){
 										return false;
 									}
 
@@ -775,7 +784,11 @@ if ( !trait_exists('Companion_Utilities') ){
 								//Check Form Fields
 								jQuery('form').each(function(){
 									if ( jQuery(this).find('input[name=s]').length ){
-										return true;
+										return false;
+									}
+
+									if ( jQuery(this).parents('#wpadminbar, iframe').length ){
+										return false;
 									}
 
 									var formFieldCount = 0;
