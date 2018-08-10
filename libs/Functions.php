@@ -113,6 +113,14 @@ trait Companion_Functions {
 
 
 
+
+
+
+
+
+
+
+
 			//Check each image within the_content()
 				//If CMYK: https://stackoverflow.com/questions/8646924/how-can-i-check-if-a-given-image-is-cmyk-in-php
 				//If not Progressive JPEG
@@ -145,32 +153,52 @@ trait Companion_Functions {
 
 
 
+
 			if ( !nebula()->is_admin_page() ){ //Non-Admin page warnings only
-				//Search individual files for debug output
+				//Search within all child theme files
 				foreach ( nebula()->glob_r(get_stylesheet_directory() . '/*') as $filepath ){
 					if ( is_file($filepath) ){
 						$skip_filenames = array('README.md', 'debug_log', 'error_log', '/vendor', 'resources/');
 						if ( !nebula()->contains($filepath, nebula()->skip_extensions()) && !nebula()->contains($filepath, $skip_filenames) ){
+							//Check for debug output
 							if ( substr(basename($filepath), -3) == '.js' ){ //JavaScript files
-								$looking_for = "/console\./i";
+								$looking_for['debug_output'] = "/console\./i";
 							} elseif ( substr(basename($filepath), -4) == '.php' ){ //PHP files
-								$looking_for = "/var_dump\(|var_export\(|print_r\(/i";
+								$looking_for['debug_output'] = "/var_dump\(|var_export\(|print_r\(/i";
 							} elseif ( substr(basename($filepath), -5) == '.scss' ){ //Sass files
 								continue; //Remove this to allow checking scss files
-								$looking_for = "/@debug/i";
+								$looking_for['debug_output'] = "/@debug/i";
 							} else {
-								continue;
+								continue; //Skip any other filetype
 							}
 
-							foreach ( file($filepath) as $line_number => $full_line ){
-								preg_match($looking_for, $full_line, $details);
+							//Check for Bootstrap JS functionality if bootstrap JS is disabled
+							if ( !nebula()->get_option('allow_bootstrap_js') ){
+								$looking_for['bootstrap_js'] = "/\.modal\(|\.bs\.|data-toggle=|data-target=|\.dropdown\(|\.tab\(|\.tooltip\(|\.carousel\(/i";
+							}
 
-								if ( !empty($details) ){
-									$nebula_warnings[] = array(
-										'category' => 'Nebula Companion',
-										'level' => 'warn',
-										'description' => 'Possible debug output in <strong>' . str_replace(get_stylesheet_directory(), '', dirname($filepath)) . '/' . basename($filepath) . '</strong> on <strong>line ' . $line_number . '</strong>.'
-									);
+							if ( !empty($looking_for) ){
+								foreach ( file($filepath) as $line_number => $full_line ){
+									foreach ( $looking_for as $category => $regex ){
+										preg_match($regex, $full_line, $details); //Look for the regex
+
+										if ( !empty($details) ){
+											if ( $category === 'debug_output' ){
+												$nebula_warnings[] = array(
+													'category' => 'Nebula Companion',
+													'level' => 'warn',
+													'description' => 'Possible debug output in <strong>' . str_replace(get_stylesheet_directory(), '', dirname($filepath)) . '/' . basename($filepath) . '</strong> on <strong>line ' . $line_number . '</strong>.'
+												);
+											} elseif ( $category === 'bootstrap_js' ){
+												$nebula_warnings[] = array(
+													'category' => 'Nebula Companion',
+													'level' => 'warn',
+													'description' => 'Bootstrap JS is disabled, but is possibly needed in <strong>' . str_replace(get_stylesheet_directory(), '', dirname($filepath)) . '/' . basename($filepath) . '</strong> on <strong>line ' . $line_number . '</strong>.',
+													'url' => get_admin_url() . 'themes.php?page=nebula_options&tab=functions&option=allow_bootstrap_js'
+												);
+											}
+										}
+									}
 								}
 							}
 						}

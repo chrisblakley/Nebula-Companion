@@ -644,6 +644,18 @@ if ( !trait_exists('Companion_Utilities') ){
 							setTimeout(function(){
 								jQuery('body').append(jQuery('<div id="audit-results"><p><strong>Nebula Audit Results:</strong></p><ul></ul></div>'));
 
+								//Reporting Observer deprecations and interventions
+								if ( typeof window.ReportingObserver !== undefined ){ //Chrome 68+
+									var nebulaAuditModeReportingObserver = new ReportingObserver(function(reports, observer){
+										for ( report of reports ){
+											if ( report.body.sourceFile.indexOf('extension') < 0 ){ //Ignore browser extensions
+												jQuery("#audit-results ul").append('<li>Reporting Observer (' + report.type + '): ' + report.body.message + ' in ' + report.body.sourceFile + ' on line ' + report.body.lineNumber + '</li>');
+											}
+										}
+									}, {buffered: true});
+									nebulaAuditModeReportingObserver.observe();
+								}
+
 								//Check performance timings... this is tough because this audit will increase load time itself... Maybe a note?
 
 								//Check protocol
@@ -823,7 +835,7 @@ if ( !trait_exists('Companion_Utilities') ){
 								} else {
 									jQuery("#audit-results").append('<p><strong><i class="fas fa-fw fa-times"></i> Found issues: ' + jQuery("#audit-results ul li").length + '<strong></p>');
 								}
-								jQuery("#audit-results").append('<p><small>Note: This does not check for @todo comments. Use the To-Do Manager in WP Admin for those.</small></p>');
+								jQuery("#audit-results").append('<p><small>Note: This does not check for @todo comments. Use the Nebula To-Do Manager in the WordPress admin dashboard to view.</small></p>');
 							}, 1);
 						});
 					</script>
