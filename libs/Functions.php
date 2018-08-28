@@ -107,7 +107,14 @@ trait Companion_Functions {
 				}
 			}
 
-
+			//Check if readme.html exists. If so, recommend deleting it.
+			if ( file_exists(get_home_path() . '/readme.html') ){
+				$nebula_warnings[] = array(
+					'category' => 'Nebula Companion',
+					'level' => 'warn',
+					'description' => 'The WordPress core readme.html file exists (which exposes version information) and should be deleted.',
+				);
+			}
 
 
 

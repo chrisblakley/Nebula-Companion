@@ -90,7 +90,7 @@ if ( !trait_exists('Companion_Dashboard') ){
 			    }
 
 			    $github_commit_json = $response['body'];
-				set_transient('nebula_github_commits', $github_commit_json, MINUTE_IN_SECONDS*60); //60 minute expiration
+				set_transient('nebula_github_commits', $github_commit_json, HOUR_IN_SECONDS*3); //3 hour expiration
 			}
 
 			$commits = json_decode($github_commit_json);
@@ -138,7 +138,7 @@ if ( !trait_exists('Companion_Dashboard') ){
 			    }
 
 			    $github_issues_json = $response['body'];
-				set_transient('nebula_github_issues', $github_issues_json, MINUTE_IN_SECONDS*15); //15 minute expiration
+				set_transient('nebula_github_issues', $github_issues_json, MINUTE_IN_SECONDS*30); //30 minute expiration
 			}
 
 			$issues = json_decode($github_issues_json);
@@ -173,7 +173,18 @@ if ( !trait_exists('Companion_Dashboard') ){
 				$ip_location = $this->ip_location('all');
 
 				if ( !empty($ip_location) ){
-					echo '<li><i class="fas fa-fw fa-location-arrow"></i> IP Location: ' . $ip_location->location->country_flag_emoji . ' <strong>' . $ip_location->city . ', ' . $ip_location->region_name . '</strong></li>';
+					$location_name = '';
+					if ( !empty($ip_location->city) ){
+						$location_name .= $ip_location->city . ', ';
+					}
+					if ( !empty($ip_location->region_name) ){
+						$location_name .= $ip_location->region_name;
+					}
+					if ( empty($location_name) && !empty($ip_location->country_name) ){
+						$location_name = $ip_location->country_name;
+					}
+
+					echo '<li><i class="fas fa-fw fa-location-arrow"></i> IP Location: ' . $ip_location->location->country_flag_emoji . ' <strong>' . $location_name . '</strong></li>';
 				} else {
 					echo '<li><i class="fas fa-fw fa-location-arrow"></i> IP Location: <em>GeoIP error or rate limit exceeded.</em></li>';
 				}
