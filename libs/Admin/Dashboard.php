@@ -152,7 +152,7 @@ if ( !trait_exists('Companion_Dashboard') ){
 
 					echo '<li>
 						<p>
-							<a href="' . $issues[$i]->html_url . '" target="_blank">' . $issues[$i]->title . '</a><br />
+							<a href="' . $issues[$i]->html_url . '" target="_blank">' . htmlentities($issues[$i]->title) . '</a><br />
 							<small><i class="far fa-fw ' . $issue_date_icon . '"></i> <span title="' . date('F j, Y @ g:ia', $issue_date_time) . '">' . human_time_diff($issue_date_time) . ' ago</span></small>
 						</p>
 					</li>';

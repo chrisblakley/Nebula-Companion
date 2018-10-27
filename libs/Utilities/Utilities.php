@@ -814,6 +814,11 @@ if ( !trait_exists('Companion_Utilities') ){
 									}
 								});
 
+								//Check for modals inside of #body-wrapper
+								if ( jQuery('#body-wrapper .modal').length ){
+									jQuery("#audit-results ul").append('<li>Modal inside of #body-wrapper. Move modals to the footer outside of the #body-wrapper div.</li>');
+								}
+
 								var nebulaWarnings = <?php echo $nebula_warnings; ?> || {};
 								jQuery.each(nebulaWarnings, function(i, warning){
 									if ( warning.description.indexOf('Audit Mode') > 0 ){
