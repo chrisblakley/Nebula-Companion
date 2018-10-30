@@ -13,7 +13,6 @@ if ( !trait_exists('Companion_Options') ){
 			add_action('admin_head', array($this, 'companion_options_metaboxes'));
 			add_action('nebula_options_assets_metabox', array($this, 'use_companion_script'));
 			add_filter('nebula_options_interface_preset_filters', array($this, 'companion_preset_option_filters'));
-			add_action('nebula_options_frontend_metabox', array($this, 'companion_dev_stylesheets_option'));
 			add_action('nebula_options_admin_notifications_metabox', array($this, 'companion_plugin_update_option'));
 			add_action('nebula_options_custom_dimensions_metabox', array($this, 'companion_ga_dimensions'));
 			add_action('nebula_options_apis_metabox', array($this, 'companion_apis'));
@@ -23,7 +22,6 @@ if ( !trait_exists('Companion_Options') ){
 		public function companion_default_options($default_options){
 			$default_options['use_companion_script'] = 0;
 			$default_options['ip_geo_api'] = '';
-			$default_options['dev_stylesheets'] = 0;
 			$default_options['weather'] = 0;
 			$default_options['advanced_form_identification'] = 0;
 			$default_options['ga_load_abandon'] = 0;
@@ -72,17 +70,6 @@ if ( !trait_exists('Companion_Options') ){
 					<p class="nebula-help-text short-help form-text text-muted">Enables the companion.js file for additional functionality. (Default: <?php echo nebula()->user_friendly_default('use_companion_script'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted"></p>
 					<p class="option-keywords">moderate page speed impact companion script</p>
-				</div>
-			<?php
-		}
-
-		public function companion_dev_stylesheets_option($nebula_options){
-			?>
-				<div class="form-group">
-					<input type="checkbox" name="nebula_options[dev_stylesheets]" id="dev_stylesheets" value="1" <?php checked('1', !empty($nebula_options['dev_stylesheets'])); ?> /><label for="dev_stylesheets">Developer Stylesheets</label>
-					<p class="nebula-help-text short-help form-text text-muted">Allows multiple developers to work on stylesheets simultaneously. (Default: <?php echo nebula()->user_friendly_default('dev_stylesheets'); ?>)</p>
-					<p class="nebula-help-text more-help form-text text-muted">Combines CSS files within /assets/css/dev/ into /assets/css/dev.css to allow multiple developers to work on a project without overwriting each other while maintaining a small resource footprint.</p>
-					<p class="option-keywords">sass scss sccs scass css minor page speed impact companion</p>
 				</div>
 			<?php
 		}
@@ -191,7 +178,7 @@ if ( !trait_exists('Companion_Options') ){
 			?>
 				<div class="form-group">
 					<input type="checkbox" name="nebula_options[design_reference_metabox]" id="design_reference_metabox" value="1" <?php checked('1', !empty($nebula_options['design_reference_metabox'])); ?> /><label for="design_reference_metabox">Design Reference Metabox</label>
-					<p class="nebula-help-text short-help form-text text-muted">Show the Design Reference dashboard metabox. (Default: <?php echo nebula()->user_friendly_default('dev_stylesheets'); ?>)</p>
+					<p class="nebula-help-text short-help form-text text-muted">Show the Design Reference dashboard metabox. (Default: <?php echo nebula()->user_friendly_default('design_reference_metabox'); ?>)</p>
 					<p class="option-keywords">companion</p>
 				</div>
 
