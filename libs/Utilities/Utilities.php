@@ -656,7 +656,7 @@ if ( !trait_exists('Companion_Utilities') ){
 									nebulaAuditModeReportingObserver.observe();
 								}
 
-								//Check performance timings... this is tough because this audit will increase load time itself... Maybe a note?
+								//@todo: consider checking WebPageTest timing if API key is available
 
 								//Check protocol
 								if ( window.location.href.indexOf('http://') === 0 ){

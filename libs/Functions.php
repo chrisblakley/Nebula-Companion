@@ -58,12 +58,18 @@ trait Companion_Functions {
 		return $debug_data;
 	}
 
+	public function is_auditing(){
+		if ( nebula()->get_option('audit_mode') || (isset($_GET['audit']) && nebula()->is_dev()) ){
+			return true;
+		}
 
+		return false;
+	}
 
 	//Add more warnings to the Nebula check
 	public function nebula_companion_warnings($nebula_warnings){
 		//If Audit Mode is enabled
-		if ( nebula()->get_option('audit_mode') || (isset($_GET['audit']) && nebula()->is_dev()) ){
+		if ( $this->is_auditing() ){
 			$nebula_audit_mode_expiration = get_transient('nebula_audit_mode_expiration');
 			if ( empty($nebula_audit_mode_expiration) ){
 				$nebula_audit_mode_expiration = time();
@@ -79,7 +85,7 @@ trait Companion_Functions {
 			}
 		}
 
-		//Audit mode only warnings
+		//Audit mode only warnings (not used on one-off page audits)
 		if ( nebula()->get_option('audit_mode') ){
 			//Remind to check incognito
 			if ( is_plugin_active('query-monitor/query-monitor.php') && nebula()->get_option('jquery_version') === 'footer' ){
@@ -91,8 +97,8 @@ trait Companion_Functions {
 			}
 		}
 
-		//Strict warnings (also used with Audit Mode)
-		if ( nebula()->get_option('audit_mode') || nebula()->get_option('advanced_warnings') ){
+		//Only check these when auditing (not on all pageviews) to prevent undesired server load
+		if ( $this->is_auditing() ){
 			//Check contact email address
 			if ( !nebula()->get_option('contact_email') ){
 				$default_contact_email = get_option('admin_email', nebula()->get_user_info('user_email', array('id' => 1)));
@@ -161,8 +167,8 @@ trait Companion_Functions {
 
 
 
-			if ( !nebula()->is_admin_page() ){ //Non-Admin page warnings only
-				//Search within all child theme files
+			if ( !nebula()->is_admin_page() ){ //Front-end (non-admin) page warnings only
+				//Check within all child theme files for various issues
 				foreach ( nebula()->glob_r(get_stylesheet_directory() . '/*') as $filepath ){
 					if ( is_file($filepath) ){
 						$skip_filenames = array('README.md', 'debug_log', 'error_log', '/vendor', 'resources/');
@@ -184,6 +190,7 @@ trait Companion_Functions {
 								$looking_for['bootstrap_js'] = "/\.modal\(|\.bs\.|data-toggle=|data-target=|\.dropdown\(|\.tab\(|\.tooltip\(|\.carousel\(/i";
 							}
 
+							//Output if found anything
 							if ( !empty($looking_for) ){
 								foreach ( file($filepath) as $line_number => $full_line ){
 									foreach ( $looking_for as $category => $regex ){
@@ -219,6 +226,17 @@ trait Companion_Functions {
 					'category' => 'Nebula Companion',
 					'level' => 'warn',
 					'description' => 'Missing sitemap XML'
+				);
+			}
+
+			//Check word count for SEO
+			$word_count = nebula()->word_count();
+			if ( $word_count < 1900 ){
+				$nebula_warnings[] = array(
+					'category' => 'Nebula Companion',
+					'level' => 'warn',
+					'description' => 'Word count (' . $word_count . ') is low for SEO purposes (1,900+ is ideal). <small>Note: Detected word count may not include custom fields!</small>',
+					'url' => get_edit_post_link(get_the_id())
 				);
 			}
 
