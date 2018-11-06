@@ -636,6 +636,7 @@ if ( !trait_exists('Companion_Utilities') ){
 						.audit-notice {position: relative; border: 2px solid blue;}
 							.audit-notice .audit-desc {background: blue;}
 						#audit-results {position: relative; background: #444; color: #fff; padding: 50px;}
+							#audit-results p {color: #fff;}
 							#audit-results a {color: #0098d7;}
 								#audit-results a:hover {color: #95d600;}
 					</style>
@@ -816,7 +817,7 @@ if ( !trait_exists('Companion_Utilities') ){
 
 								//Check for modals inside of #body-wrapper
 								if ( jQuery('#body-wrapper .modal').length ){
-									jQuery("#audit-results ul").append('<li>Modal inside of #body-wrapper. Move modals to the footer outside of the #body-wrapper div.</li>');
+									jQuery("#audit-results ul").append('<li>Modal found inside of #body-wrapper. Move modals to the footer outside of the #body-wrapper div.</li>');
 								}
 
 								var nebulaWarnings = <?php echo $nebula_warnings; ?> || {};
