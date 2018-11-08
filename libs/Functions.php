@@ -166,14 +166,13 @@ trait Companion_Functions {
 
 
 
-
 			if ( !nebula()->is_admin_page() ){ //Front-end (non-admin) page warnings only
 				//Check within all child theme files for various issues
 				foreach ( nebula()->glob_r(get_stylesheet_directory() . '/*') as $filepath ){
 					if ( is_file($filepath) ){
 						$skip_filenames = array('README.md', 'debug_log', 'error_log', '/vendor', 'resources/');
-						if ( !nebula()->contains($filepath, nebula()->skip_extensions()) && !nebula()->contains($filepath, $skip_filenames) ){
-							//Check for debug output
+						if ( !nebula()->contains($filepath, nebula()->skip_extensions()) && !nebula()->contains($filepath, $skip_filenames) ){ //If the filename does not contain something we are ignoring
+							//Prep an array of strings to look for
 							if ( substr(basename($filepath), -3) == '.js' ){ //JavaScript files
 								$looking_for['debug_output'] = "/console\./i";
 							} elseif ( substr(basename($filepath), -4) == '.php' ){ //PHP files
@@ -190,18 +189,22 @@ trait Companion_Functions {
 								$looking_for['bootstrap_js'] = "/\.modal\(|\.bs\.|data-toggle=|data-target=|\.dropdown\(|\.tab\(|\.tooltip\(|\.carousel\(/i";
 							}
 
-							//Output if found anything
+							//Search the file and output if found anything
 							if ( !empty($looking_for) ){
-								foreach ( file($filepath) as $line_number => $full_line ){
-									foreach ( $looking_for as $category => $regex ){
-										preg_match($regex, $full_line, $details); //Look for the regex
+								foreach ( file($filepath) as $line_number => $full_line ){ //Loop through each line of the file
+									foreach ( $looking_for as $category => $regex ){ //Search through each string we are looking for from above
+										if ( preg_match("/^\/\/|\/\*|#/", trim($full_line)) == true ){ //Skip lines that begin with a comment
+											continue;
+										}
+
+										preg_match($regex, $full_line, $details); //Actually Look for the regex in the line
 
 										if ( !empty($details) ){
 											if ( $category === 'debug_output' ){
 												$nebula_warnings[] = array(
 													'category' => 'Nebula Companion',
 													'level' => 'warn',
-													'description' => 'Possible debug output in <strong>' . str_replace(get_stylesheet_directory(), '', dirname($filepath)) . '/' . basename($filepath) . '</strong> on <strong>line ' . $line_number . '</strong>.'
+													'description' => 'Possible debug output in <strong>' . str_replace(get_stylesheet_directory(), '', dirname($filepath)) . '/' . basename($filepath) . '</strong> on <strong>line ' . ($line_number+1) . '</strong>.'
 												);
 											} elseif ( $category === 'bootstrap_js' ){
 												$nebula_warnings[] = array(
@@ -232,10 +235,11 @@ trait Companion_Functions {
 			//Check word count for SEO
 			$word_count = nebula()->word_count();
 			if ( $word_count < 1900 ){
+				$word_count_warning = ( $word_count === 0 )? 'Word count audit is not looking for custom fields outside of the main content editor. <a href="https://gearside.com/nebula/functions/word_count/?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=word+count+audit+warning" target="_blank">Hook custom fields into the Nebula word count functionality</a> to properly audit.' : 'Word count (' . $word_count . ') is low for SEO purposes (1,900+ is ideal). <small>Note: Detected word count may not include custom fields!</small>';
 				$nebula_warnings[] = array(
 					'category' => 'Nebula Companion',
 					'level' => 'warn',
-					'description' => 'Word count (' . $word_count . ') is low for SEO purposes (1,900+ is ideal). <small>Note: Detected word count may not include custom fields!</small>',
+					'description' => $word_count_warning,
 					'url' => get_edit_post_link(get_the_id())
 				);
 			}
