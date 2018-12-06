@@ -719,7 +719,7 @@ if ( !trait_exists('Companion_Utilities') ){
 								//Check for placeholder text (in the page content and metadata)
 								var entireDOM = jQuery('html').clone();
 								entireDOM.find('#qm, #wpadminbar, script, #audit-results').remove(); //Remove elements to ignore (must ignore scripts so this audit doesn't find itself)
-								var commonPlaceholderWords = ['lorem', 'ipsum', 'dolor', 'sit amet', 'consectetur', 'adipiscing', 'malesuada', 'vestibulum', 'vitae', 'elit']; //Be careful of false positives due to parts of real words (Ex: "amet" in "parameter")
+								var commonPlaceholderWords = ['lorem', 'ipsum', 'dolor', 'sit amet', 'consectetur', 'adipiscing', 'malesuada', 'vestibulum']; //Be careful of false positives due to parts of real words (Ex: "amet" in "parameter")
 								jQuery.each(commonPlaceholderWords, function(i, word){
 									if ( entireDOM.html().indexOf(word) > -1 ){
 										jQuery("#audit-results ul").append('<li>Placeholder text found ("' + word + '").</li>');
