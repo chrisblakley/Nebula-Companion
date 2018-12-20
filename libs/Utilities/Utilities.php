@@ -575,10 +575,15 @@ if ( !trait_exists('Companion_Utilities') ){
 			}
 		}
 
-		//Visualize max scroll percent by adding ?max=16.12 to the URL
+		//Visualize max scroll percent by adding ?max_scroll=16.12 to the URL
 		public function visualize_scroll_percent(){
 			if ( isset($_GET['max_scroll']) && nebula()->is_staff() ){
 				?>
+					<style>
+						.nebula-scroll-visual:before {display: inline-block; position: absolute; top: 0; left: 0; font-size: 10px; line-height: 1.4; color: #fff; padding: 2px 6px;}
+						.nebula-scroll-seen:before {content: "Top of viewport"; background: orange;}
+						.nebula-scroll-unseen:before {content: "Bottom of viewport"; background: red;}
+					</style>
 					<script>
 						jQuery(window).on('load', function(){
 							setTimeout(function(){
@@ -591,10 +596,10 @@ if ( !trait_exists('Companion_Utilities') ){
 								jQuery(window).on('scroll', function(){
 									scrollTop = jQuery(window).scrollTop();
 									var currentScrollPercent = ((scrollTop/(pageHeight-viewportHeight))*100).toFixed(2);
-								    console.log('Current Scroll Percent: ' + currentScrollPercent + '%');
+								    console.log('Current Scroll Percent: ' + currentScrollPercent + '%'); //It would be cool to monitor this variable in Chrome DevTools, but I don't think we can initiate that here.
 								});
 
-								jQuery('<div style="display: none; position: absolute; top: ' + percentTop + 'px; left: 0; width: 100%; height: ' + divHeight + 'px; border-top: 2px solid orange; background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.8) ' + viewportHeight + 'px); z-index: 999999; pointer-events: none; overflow: hidden;"><div style="position: absolute; top: ' + viewportHeight + 'px; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); border-top: 2px solid red;"></div></div>').appendTo('body').fadeIn();
+								jQuery('<div id="nebula-scroll-visualization" class="nebula-scroll-visual nebula-scroll-seen" style="display: none; position: absolute; top: ' + percentTop + 'px; left: 0; width: 100%; height: ' + divHeight + 'px; border-top: 2px solid orange; background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.8) ' + viewportHeight + 'px); z-index: 999999; pointer-events: none; overflow: hidden;"><div class="nebula-scroll-visual nebula-scroll-unseen" style="position: absolute; top: ' + viewportHeight + 'px; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); border-top: 2px solid red;"></div></div>').appendTo('body').fadeIn();
 							}, 500);
 						});
 					</script>
