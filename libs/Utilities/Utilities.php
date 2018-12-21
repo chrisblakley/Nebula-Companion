@@ -454,6 +454,36 @@ if ( !trait_exists('Companion_Utilities') ){
 			return array('r' => $r, 'g' => $g, 'b' => $b);
 		}
 
+		//Calculate the linear channel of a color
+		public function linear_channel($color){
+			$color = $color/255;
+
+			if ( $color < 0.03928 ){
+				return $color/12.92;
+			}
+
+			return pow(($color + 0.055)/1.055, 2.4);
+		}
+
+		//Calculate the luminance for a color.
+		public function luminance($color){
+			$rgb = $this->hex2rgb($color);
+
+			$red = $this->linear_channel($rgb['r'] + 1);
+			$green = $this->linear_channel($rgb['g'] + 1);
+			$blue = $this->linear_channel($rgb['b'] + 1);
+
+			return 0.2126 * $red + 0.7152 * $green + 0.0722 * $blue;
+		}
+
+		//Calculate the contrast ratio between two colors.
+		public function contrast($front, $back){
+			$backLum = $this->luminance($back) + 0.05;
+			$foreLum = $this->luminance($front) + 0.05;
+
+			return max(array($backLum, $foreLum)) / min(array($backLum, $foreLum));
+		}
+
 		//Time all core WordPress hooks
 		//@todo: Why isn't this getting called for all hooks?
 		public function all_wp_hook_times(){

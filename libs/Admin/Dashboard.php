@@ -28,13 +28,21 @@ if ( !trait_exists('Companion_Dashboard') ){
 
 			$primary_hex = rtrim(get_theme_mod('nebula_primary_color', nebula()->sass_color('primary')), ';');
 			$primary_rgb = $this->hex2rgb($primary_hex);
+			$primary_ratio_white = round($this->contrast($primary_hex, '#ffffff'), 2);
+			$primary_ratio_black = round($this->contrast($primary_hex, '#000000'), 2);
 
 			$secondary_hex = rtrim(get_theme_mod('nebula_secondary_color', nebula()->sass_color('secondary')), ';');
 			$secondary_rgb = $this->hex2rgb($secondary_hex);
+			$secondary_ratio_white = round($this->contrast($secondary_hex, '#ffffff'), 2);
+			$secondary_ratio_black = round($this->contrast($secondary_hex, '#000000'), 2);
 			?>
 				<div class="nebula-metabox-row">
 					<div class="design-reference-col">
-						<a class="color-block primary" href="https://www.colorhexa.com/<?php echo ltrim($primary_hex, '#'); ?>" target="_blank">T</a>
+						<a class="color-block primary" href="https://www.colorhexa.com/<?php echo ltrim($primary_hex, '#'); ?>" target="_blank">
+							<span class="tee">T</span>
+							<span class="color-contrast-ratio light"><?php echo $primary_ratio_white; ?> <i class="fa fa-<?php echo ( $primary_ratio_white >= 4.5 )? 'check' : 'times'; ?>"></i></span>
+							<span class="color-contrast-ratio dark"><?php echo $primary_ratio_black; ?> <i class="fa fa-<?php echo ( $primary_ratio_black >= 4.5 )? 'check' : 'times'; ?>"></i></span>
+						</a>
 						<div>
 							<strong>Primary Color</strong><br />
 							Hex <?php echo $primary_hex; ?><br />
@@ -42,7 +50,11 @@ if ( !trait_exists('Companion_Dashboard') ){
 						</div>
 					</div>
 					<div class="design-reference-col">
-						<a class="color-block secondary" href="https://www.colorhexa.com/<?php echo ltrim($secondary_hex, '#'); ?>" target="_blank">T</a>
+						<a class="color-block secondary" href="https://www.colorhexa.com/<?php echo ltrim($secondary_hex, '#'); ?>" target="_blank">
+							<span class="tee">T</span>
+							<span class="color-contrast-ratio light"><?php echo $secondary_ratio_white; ?> <i class="fa fa-<?php echo ( $secondary_ratio_white >= 4.5 )? 'check' : 'times'; ?>"></i></span>
+							<span class="color-contrast-ratio dark"><?php echo $secondary_ratio_black; ?> <i class="fa fa-<?php echo ( $secondary_ratio_black >= 4.5 )? 'check' : 'times'; ?>"></i></span>
+						</a>
 						<div>
 							<strong>Secondary Color</strong><br />
 							Hex <?php echo $secondary_hex; ?><br />
