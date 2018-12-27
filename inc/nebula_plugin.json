@@ -1,16 +1,16 @@
 {
 	"name": "Nebula Companion",
-	"version": "6.7.21.6543",
+	"version": "6.7.27.3731",
 	"download_url": "https://github.com/chrisblakley/Nebula-Companion/archive/master.zip",
 	"homepage": "https://gearside.com/nebula/?utm_campaign=nebula+companion+plugin&utm_source=wordpress&utm_medium=wordpress&utm_content=plugin+update+details",
-	"last_updated": "2018-12-21 00:00:00",
-	"upgrade_notice": "Added labels to max scroll visualizer",
+	"last_updated": "2018-12-27 00:00:00",
+	"upgrade_notice": "Added color contrast ratios to Design Metabox",
 	"author": "Chris Blakley",
 	"author_homepage": "https://gearside.com/?utm_campaign=nebula+companion+plugin&utm_source=wordpress&utm_medium=wordpress&utm_content=plugin+update+details",
 	"sections": {
 		"description": "<p>A plugin with more niche functionality for the Nebula WordPress theme framework.</p><p><a href='https://github.com/chrisblakley/Nebula/' target='_blank'>Nebula theme on Github &raquo;</a></p><p><a href='https://gearside.com/nebula/?utm_campaign=nebula+companion+plugin&utm_source=wordpress&utm_medium=wordpress&utm_content=plugin+update+details' target='_blank'>Nebula theme documentation &raquo;</a></p><p><a href='https://github.com/chrisblakley/Nebula-Companion/commits/master' target='_blank'>Nebula Companion plugin on Github &raquo;</a></p>",
 		"installation": "Upload to the WordPress plugins directory and activate. This only runs when the Nebula theme is active.",
-		"changelog": "<p><strong>Latest Change:</strong><br>Added labels to max scroll visualizer<br /><a href='https://github.com/chrisblakley/Nebula-Companion/commit/fb0830506b81dddd5868ac69ab44b2b2a0d54586' target='_blank'>See changes &raquo;</a></p><p><a href='https://github.com/chrisblakley/Nebula-Companion/commits/master' target='_blank'>See full changelog here &raquo;</a></p>"
+		"changelog": "<p><strong>Latest Change:</strong><br>Added color contrast ratios to Design Metabox<br /><a href='https://github.com/chrisblakley/Nebula-Companion/commit/9d45637186c8c97f5e1fa005d17bbdb7a5299fe4' target='_blank'>See changes &raquo;</a></p><p><a href='https://github.com/chrisblakley/Nebula-Companion/commits/master' target='_blank'>See full changelog here &raquo;</a></p>"
 	},
 	"icons" : {
 		"1x" : "https://raw.githubusercontent.com/chrisblakley/Nebula-Companion/master/assets/img/icon-128x128.png",
