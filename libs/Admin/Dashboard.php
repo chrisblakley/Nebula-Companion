@@ -22,6 +22,7 @@ if ( !trait_exists('Companion_Dashboard') ){
 		}
 
 		public function dashboard_nebula_design(){
+			nebula()->timer('Nebula Companion Design Dashboard');
 			if ( nebula()->get_option('design_reference_link') ){
 				echo '<p><i class="fas fa-fw fa-file-image"></i> <a href="' . nebula()->get_option('design_reference_link') . '" target="_blank">Design File(s) &raquo;</a></p>';
 			}
@@ -67,6 +68,8 @@ if ( !trait_exists('Companion_Dashboard') ){
 			if ( nebula()->get_option('additional_design_references') ){
 				echo '<p><strong>Additional Notes:</strong><br />' . nebula()->get_option('additional_design_references') . '</p>';
 			}
+
+			nebula()->timer('Nebula Companion Design Dashboard', 'end');
 		}
 
 		//Add a Github metabox for recently updated issues
@@ -79,6 +82,8 @@ if ( !trait_exists('Companion_Dashboard') ){
 		}
 
 		public function dashboard_nebula_github(){
+			nebula()->timer('Nebula Companion Github Dashboard');
+
 			$client_id = ''; //@todo: get this from Advanced nebula options
 			$client_secret = ''; //@todo: get this from Advanced nebula options
 			if ( !empty($client_id) && !empty($client_secret) ){
@@ -176,10 +181,12 @@ if ( !trait_exists('Companion_Dashboard') ){
 
 			echo '<p><small><a href="' . nebula()->get_option('github_url') . '/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc" target="_blank">View all issues &raquo;</a></small></p>';
 			echo '</div></div>';
+			nebula()->timer('Nebula Companion Github Dashboard', 'end');
 		}
 
 		//Add more data to the user dashboard
 		public function more_user_dashboard_data(){
+			nebula()->timer('Nebula Companion User Dashboard');
 			//IP Location
 			if ( $this->ip_location() ){
 				$ip_location = $this->ip_location('all');
@@ -212,6 +219,7 @@ if ( !trait_exists('Companion_Dashboard') ){
 					echo '<li><i class="fas fa-fw fa-cloud"></i> Weather: <em>API error for zip code ' . $ip_zip . '.</em></li>';
 				}
 			}
+			nebula()->timer('Nebula Companion User Dashboard', 'end');
 		}
 
 		public function more_directory_sizes(){

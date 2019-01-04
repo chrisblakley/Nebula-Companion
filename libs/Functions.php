@@ -68,6 +68,8 @@ trait Companion_Functions {
 
 	//Add more warnings to the Nebula check
 	public function nebula_companion_warnings($nebula_warnings){
+		nebula()->timer('Nebula Companion Warnings');
+
 		//If Audit Mode is enabled
 		if ( $this->is_auditing() ){
 			$nebula_audit_mode_expiration = get_transient('nebula_audit_mode_expiration');
@@ -275,6 +277,7 @@ trait Companion_Functions {
 			);
 		}
 
+		nebula()->timer('Nebula Companion Warnings', 'end');
 		return $nebula_warnings;
 	}
 
