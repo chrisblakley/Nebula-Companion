@@ -124,7 +124,14 @@ trait Companion_Functions {
 				);
 			}
 
-
+			//Check if session directory is writable
+			if ( !is_writable(session_save_path()) ){
+				$nebula_warnings[] = array(
+					'category' => 'Nebula Companion',
+					'level' => 'warn',
+					'description' => 'The session directory (' . session_save_path() . ') is not writable. Session data can not be used!',
+				);
+			}
 
 
 

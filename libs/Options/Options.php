@@ -151,7 +151,7 @@ if ( !trait_exists('Companion_Options') ){
 				</div>
 
 				<div class="form-group" dependent-or="use_companion_script">
-					<input type="checkbox" name="nebula_options[advanced_form_identification]" id="advanced_form_identification" value="1" <?php checked('1', !empty($nebula_options['advanced_form_identification'])); ?> /><label for="advanced_form_identification">Real-time Form Identification</label>
+					<input type="checkbox" name="nebula_options[advanced_form_identification]" id="advanced_form_identification" value="1" <?php checked('1', !empty($nebula_options['advanced_form_identification'])); ?> /><label for="advanced_form_identification">Real-Time Form Identification</label>
 					<p class="nebula-help-text short-help form-text text-muted">Use advanced methods of identification to send to the CRM. (Default: <?php echo nebula()->user_friendly_default('advanced_form_identification'); ?>)</p>
 					<p class="dependent-note hidden">This option is dependent on the use of the companion script (companion.js).</p>
 					<p class="nebula-help-text more-help form-text text-muted">This includes the use of query parameters and real-time form input listeners.</p>
