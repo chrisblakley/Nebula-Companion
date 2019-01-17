@@ -4,12 +4,6 @@ jQuery(document).on('nebula_event_tracking', function(){
 	nvFormRealTime();
 });
 
-jQuery(document).on('wpcf7submit', function(e){
-	if ( has(nebula, 'site.options.advanced_form_identification') ){
-		nvForm(); //nvForm() here because it triggers after all others. No nv() here so it doesn't overwrite the other (more valuable) data.
-	}
-});
-
 /*==========================
  DOM Ready (After nebula.js is loaded)
  ===========================*/
@@ -161,7 +155,7 @@ function prefillFacebookFields(){
 //Easily send data to nv() via URL query parameters
 //Use the nv-* format in the URL to pass data to this function. Ex: ?nv-firstname=Chris (can be encoded, too)
 function nvQueryParameters(){
-	if ( has(nebula, 'site.options.advanced_form_identification') ){
+	if ( has(nebula, 'site.options.advanced_form_identification') && nebula.site.options.advanced_form_identification ){ //If the option exists and is enabled
 		var queryParameters = getQueryStrings();
 		var nvData = {};
 		var nvRemove = [];
@@ -197,7 +191,7 @@ function nvQueryParameters(){
 //Listen to form inputs and identify in real-time
 //Add a class to the input field with the category to use. Ex: nv-firstname
 function nvFormRealTime(){
-	if ( has(nebula, 'site.options.advanced_form_identification') ){
+	if ( has(nebula, 'site.options.advanced_form_identification') && nebula.site.options.advanced_form_identification ){ //If the option exists and is enabled
 		jQuery('form [class*="nv-"]').on('blur', function(){
 			var thisVal = jQuery.trim(jQuery(this).val());
 
@@ -211,29 +205,5 @@ function nvFormRealTime(){
 				}
 			}
 		});
-	}
-}
-
-//Easily send form data to nv() with nv-* classes
-//Add a class to the input field with the category to use. Ex: nv-firstname
-//Call this function before sending a ga() event because it sets dimensions too
-function nvForm(){
-	nvFormObj = {};
-	jQuery('form [class*="nv-"]').each(function(){
-		if ( jQuery.trim(jQuery(this).val()).length ){
-			if ( jQuery(this).attr('class').indexOf('nv-notable_poi') >= 0 ){
-				ga('set', nebula.analytics.dimensions.poi, jQuery('.notable-poi').val());
-			}
-
-			var cat = /nv-([a-z\_]+)/g.exec(jQuery(this).attr('class'));
-			if ( cat ){
-				var thisCat = cat[1];
-				nvFormObj[thisCat] = jQuery(this).val();
-			}
-		}
-	});
-
-	if ( Object.keys(nvFormObj).length ){
-		nv('identify', nvFormObj);
 	}
 }
