@@ -284,6 +284,10 @@ trait Companion_Functions {
 			);
 		}
 
+		if ( $this->is_auditing() ){
+			$nebula_warnings = apply_filters('nebula_audits_php', $nebula_warnings);
+		}
+
 		nebula()->timer('Nebula Companion Warnings', 'end');
 		return $nebula_warnings;
 	}

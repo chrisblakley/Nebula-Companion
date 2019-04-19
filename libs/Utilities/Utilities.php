@@ -586,6 +586,7 @@ if ( !trait_exists('Companion_Utilities') ){
 		//Additional Google Analytics detections
 		public function analytics_before_pageview(){
 			//Detect privacy mode
+			//Note: in Chrome 76 (or thereabouts), this method of detecting incognito mode will no longer work: https://chromium-review.googlesource.com/c/chromium/src/+/1472290/4#message-a0db53a4175933b3b5dd4568d52493c9fdc7bca0
 			if ( nebula()->get_option('cd_privacymode') ){
 				?>
 					var fileSystem = window.RequestFileSystem || window.webkitRequestFileSystem;
@@ -854,6 +855,8 @@ if ( !trait_exists('Companion_Utilities') ){
 								if ( jQuery('#body-wrapper .modal').length ){
 									jQuery("#audit-results ul").append('<li>Modal found inside of #body-wrapper. Move modals to the footer outside of the #body-wrapper div.</li>');
 								}
+
+								<?php do_action('nebula_audits_js'); ?>
 
 								var nebulaWarnings = <?php echo $nebula_warnings; ?> || {};
 								jQuery.each(nebulaWarnings, function(i, warning){
