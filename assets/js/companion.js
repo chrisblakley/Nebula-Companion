@@ -50,7 +50,7 @@ function facebookConnect(){
 //Check Facebook Status
 function checkFacebookStatus(){
 	FB.getLoginStatus(function(response){
-		nebula.user.facebook = {'status': response.status}
+		nebula.user.facebook = {'status': response.status};
 		if ( nebula.user.facebook.status === 'connected' ){ //User is logged into Facebook and is connected to this app.
 			FB.api('/me', {fields: 'id,name,first_name,last_name,cover,devices,gender,email,link,locale,timezone'}, function(response){ //Only publicly available fields
 				nebula.user.facebook = {
@@ -86,7 +86,7 @@ function checkFacebookStatus(){
 				nebula.user.location = {
 					locale: response.locale,
 					timezone: response.timezone,
-				}
+				};
 
 				nv('identify', {
 					firstname: response.first_name,

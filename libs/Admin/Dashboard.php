@@ -27,14 +27,14 @@ if ( !trait_exists('Companion_Dashboard') ){
 				echo '<p><i class="fas fa-fw fa-file-image"></i> <a href="' . nebula()->get_option('design_reference_link') . '" target="_blank">Design File(s) &raquo;</a></p>';
 			}
 
-			$theme_mod_primary_color = get_theme_mod('nebula_primary_color');
-			$primary_hex = ( !empty($theme_mod_primary_color) )? $theme_mod_primary_color : rtrim(nebula()->sass_color('primary'), ';');
+			$sass_primary_color = nebula()->sass_color('primary');
+			$primary_hex = ( !empty($sass_primary_color) )? rtrim($sass_primary_color, ';') : get_theme_mod('nebula_primary_color');
 			$primary_rgb = $this->hex2rgb($primary_hex);
 			$primary_ratio_white = round($this->contrast($primary_hex, '#ffffff'), 2);
 			$primary_ratio_black = round($this->contrast($primary_hex, '#000000'), 2);
 
-			$theme_mod_secondary_color = get_theme_mod('nebula_secondary_color');
-			$secondary_hex = ( !empty($theme_mod_secondary_color) )? $theme_mod_secondary_color : rtrim(nebula()->sass_color('secondary'), ';');
+			$sass_secondary_color = nebula()->sass_color('secondary');
+			$secondary_hex = ( !empty($sass_secondary_color) )? rtrim($sass_secondary_color, ';') : get_theme_mod('nebula_secondary_color');
 			$secondary_rgb = $this->hex2rgb($secondary_hex);
 			$secondary_ratio_white = round($this->contrast($secondary_hex, '#ffffff'), 2);
 			$secondary_ratio_black = round($this->contrast($secondary_hex, '#000000'), 2);

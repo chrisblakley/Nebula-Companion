@@ -7,8 +7,8 @@
 //Design Reference metabox
 .design-reference-col {display: flex; margin-bottom: 10px; margin-right: 20px;
 	.color-block {display: flex; flex-direction: column; width: 50px; padding-top: 10px; padding-bottom: 4px; text-align: center; margin-right: 6px;
-		&.primary {background: $primary_color; color: readable-color($primary_color);}
-		&.secondary {background: $secondary_color; color: readable-color($secondary_color);}
+		&.primary {background: $primary_color; color: high-contrast-color($primary_color);}
+		&.secondary {background: $secondary_color; color: high-contrast-color($secondary_color);}
 
 		span {font-size: 10px; line-height: 1;
 			&.tee {font-size: 24px; font-family: serif; padding-bottom: 10px; border-bottom: 1px dotted #fff;}

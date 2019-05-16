@@ -672,7 +672,8 @@ if ( !trait_exists('Companion_Utilities') ){
 						.audit-notice {position: relative; border: 2px solid blue;}
 							.audit-notice .audit-desc {background: blue;}
 						#audit-results {position: relative; background: #444; color: #fff; padding: 50px;}
-							#audit-results p {color: #fff;}
+							#audit-results p,
+							#audit-results li {color: #fff;}
 							#audit-results a {color: #0098d7;}
 								#audit-results a:hover {color: #95d600;}
 					</style>
@@ -680,6 +681,9 @@ if ( !trait_exists('Companion_Utilities') ){
 						jQuery(window).on('load', function(){
 							setTimeout(function(){
 								jQuery('body').append(jQuery('<div id="audit-results"><p><strong>Nebula Audit Results:</strong></p><ul></ul></div>'));
+
+								var entireDOM = jQuery('html').clone(); //Duplicate the entire HTML to run audits against
+								entireDOM.find('#query-monitor-main, #qm, #wpadminbar, script, #audit-results').remove(); //Remove elements to ignore (must ignore scripts so this audit doesn't find itself)
 
 								//Reporting Observer deprecations and interventions
 								if ( typeof window.ReportingObserver !== undefined ){ //Chrome 68+
@@ -703,13 +707,13 @@ if ( !trait_exists('Companion_Utilities') ){
 								}
 
 								//Empty meta description
-								if ( !jQuery('meta[name="description"]').length ){
+								if ( !entireDOM.find('meta[name="description"]').length ){
 									jQuery("#audit-results ul").append('<li>Missing meta description</li>');
 								} else {
-									if ( !jQuery('meta[name="description"]').attr('content').length ){
+									if ( !entireDOM.find('meta[name="description"]').attr('content').length ){
 										jQuery("#audit-results ul").append('<li>Meta description tag exists but is empty</li>');
 									} else {
-										if ( jQuery('meta[name="description"]').attr('content').length < 60 ){
+										if ( entireDOM.find('meta[name="description"]').attr('content').length < 60 ){
 											jQuery("#audit-results ul").append('<li>Short meta description</li>');
 										}
 									}
@@ -729,32 +733,31 @@ if ( !trait_exists('Companion_Utilities') ){
 								}
 
 								//Check H1
-								if ( !jQuery('h1').length ){
+								if ( !entireDOM.find('h1').length ){
 									jQuery("#audit-results ul").append('<li>Missing H1 tag</li>');
 
-									if ( jQuery('h1').length > 1 ){
+									if ( entireDOM.find('h1').length > 1 ){
 										jQuery("#audit-results ul").append('<li>Too many H1 tags</li>');
 									}
 								}
 
 								//Check H2
-								if ( !jQuery('h2').length ){
-									jQuery("#audit-results ul").append('<li>Missing H2 tag</li>');
-								} else if ( jQuery('h2') <= 2 ){
+								if ( !entireDOM.find('h2').length ){
+									jQuery("#audit-results ul").append('<li>Missing H2 tags</li>');
+								} else if ( entireDOM.find('h2') <= 2 ){
 									jQuery("#audit-results ul").append('<li>Very few H2 tags</li>');
 								}
 
-								//Check that each <article> has a heading tag
-								jQuery('article').each(function(){
+								//Check that each <article> and <section> has a heading tag
+								//https://www.w3.org/wiki/HTML/Usage/Headings/Missing
+								entireDOM.find('article, section').each(function(){
 									if ( !jQuery(this).find('h1, h2, h3, h4, h5, h6').length ){
-										jQuery(this).addClass('nebula-audit audit-warn').append(jQuery('<div class="audit-desc">Missing heading tag in this article</div>'));
-										jQuery("#audit-results ul").append('<li>Mising heading tag within an &lt;article&gt; tag.</li>');
+										jQuery(this).addClass('nebula-audit audit-warn').append(jQuery('<div class="audit-desc">Missing heading tag in this ' + jQuery(this).prop("tagName").toLowerCase() + '</div>'));
+										jQuery("#audit-results ul").append('<li>Mising heading tag within a &lt;' + jQuery(this).prop("tagName").toLowerCase() + '&gt; tag.</li>');
 									}
 								});
 
 								//Check for placeholder text (in the page content and metadata)
-								var entireDOM = jQuery('html').clone();
-								entireDOM.find('#qm, #wpadminbar, script, #audit-results').remove(); //Remove elements to ignore (must ignore scripts so this audit doesn't find itself)
 								var commonPlaceholderWords = ['lorem', 'ipsum', 'dolor', 'sit amet', 'consectetur', 'adipiscing', 'malesuada', 'vestibulum']; //Be careful of false positives due to parts of real words (Ex: "amet" in "parameter")
 								jQuery.each(commonPlaceholderWords, function(i, word){
 									if ( entireDOM.html().indexOf(word) > -1 ){
@@ -773,20 +776,16 @@ if ( !trait_exists('Companion_Utilities') ){
 									jQuery("#audit-results ul").append('<li>Broken image</li>');
 								});
 
-								//Check img alt
-								jQuery('img:not([alt]), img[alt=""]').each(function(){
+								//Images
+								entireDOM.find('img').each(function(){
 									if ( jQuery(this).parents('#wpadminbar, iframe, #map_canvas').length ){
 										return false;
 									}
 
-									jQuery(this).wrap('<div class="nebula-audit audit-error"></div>').after('<div class="audit-desc">Missing ALT attribute</div>');
-									jQuery("#audit-results ul").append('<li>Missing ALT attribute</li>');
-								});
-
-								//Images
-								jQuery('img').each(function(){
-									if ( jQuery(this).parents('#wpadminbar, iframe, #map_canvas').length ){
-										return false;
+									//Check img alt
+									if ( !jQuery(this).is('[alt]') ){
+										jQuery(this).wrap('<div class="nebula-audit audit-error"></div>').after('<div class="audit-desc">Missing ALT attribute</div>');
+										jQuery("#audit-results ul").append('<li>Missing ALT attribute</li>');
 									}
 
 									//Check image filesize. Note: cached files are 0
@@ -797,6 +796,9 @@ if ( !trait_exists('Companion_Utilities') ){
 											jQuery("#audit-results ul").append('<li>Image filesize over 500kb</li>');
 										}
 									}
+
+									//@todo "Nebula" 0: Use Fetch API with method: 'HEAD' as a more simple way of getting filesize.
+									//response.headers.get('content-length')
 
 									//Check image width
 									if ( jQuery(this)[0].naturalWidth > 1200 ){
@@ -812,7 +814,7 @@ if ( !trait_exists('Companion_Utilities') ){
 								});
 
 								//Videos
-								jQuery('video').each(function(){
+								entireDOM.find('video').each(function(){
 									//Check video filesize. Note: cached files are 0
 									if ( window.performance ){ //IE10+
 										var vTime = performance.getEntriesByName(jQuery(this).find('source').attr('src'))[0];
@@ -823,6 +825,9 @@ if ( !trait_exists('Companion_Utilities') ){
 										}
 									}
 
+									//@todo "Nebula" 0: Use Fetch API with method: 'HEAD' as a more simple way of getting filesize.
+									//response.headers.get('content-length')
+
 									//Check unmuted autoplay
 									if ( jQuery(this).is('[autoplay]') && !jQuery(this).is('[muted]') ){
 										jQuery(this).wrap('<div class="nebula-audit audit-warn"></div>').after('<div class="audit-desc">Autoplay without muted attribute</div>');
@@ -831,7 +836,7 @@ if ( !trait_exists('Companion_Utilities') ){
 								});
 
 								//Check Form Fields
-								jQuery('form').each(function(){
+								entireDOM.find('form').each(function(){
 									if ( jQuery(this).find('input[name=s]').length ){
 										return false;
 									}
@@ -852,7 +857,7 @@ if ( !trait_exists('Companion_Utilities') ){
 								});
 
 								//Check for modals inside of #body-wrapper
-								if ( jQuery('#body-wrapper .modal').length ){
+								if ( entireDOM.find('#body-wrapper .modal').length ){
 									jQuery("#audit-results ul").append('<li>Modal found inside of #body-wrapper. Move modals to the footer outside of the #body-wrapper div.</li>');
 								}
 

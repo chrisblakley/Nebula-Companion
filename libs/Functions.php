@@ -155,7 +155,7 @@ trait Companion_Functions {
 				foreach ( $matches as $image_url ){
 					//Check CMYK
 					$image_info = getimagesize($image_url);
-					var_dump($image_info); echo '<br>';
+					//var_dump($image_info); echo '<br>';
 					if ( $image_info['channels'] == 4 ){
 						echo 'it is cmyk<br><br>'; //ADD WARNING HERE
 					} else {
