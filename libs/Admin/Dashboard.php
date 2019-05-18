@@ -27,43 +27,49 @@ if ( !trait_exists('Companion_Dashboard') ){
 				echo '<p><i class="fas fa-fw fa-file-image"></i> <a href="' . nebula()->get_option('design_reference_link') . '" target="_blank">Design File(s) &raquo;</a></p>';
 			}
 
-			$sass_primary_color = nebula()->sass_color('primary');
-			$primary_hex = ( !empty($sass_primary_color) )? rtrim($sass_primary_color, ';') : get_theme_mod('nebula_primary_color');
-			$primary_rgb = $this->hex2rgb($primary_hex);
-			$primary_ratio_white = number_format($this->contrast($primary_hex, '#ffffff'), 2, '.', '');
-			$primary_ratio_black = number_format($this->contrast($primary_hex, '#000000'), 2, '.', '');
+			$notable_colors = apply_filters('nebula_notable_colors', array('$primary_color', '$secondary_color')); //Allow other themes and plugins to designate notable colors
 
-			$sass_secondary_color = nebula()->sass_color('secondary');
-			$secondary_hex = ( !empty($sass_secondary_color) )? rtrim($sass_secondary_color, ';') : get_theme_mod('nebula_secondary_color');
-			$secondary_rgb = $this->hex2rgb($secondary_hex);
-			$secondary_ratio_white = number_format($this->contrast($secondary_hex, '#ffffff'), 2, '.', '');
-			$secondary_ratio_black = number_format($this->contrast($secondary_hex, '#000000'), 2, '.', '');
+			$notable_colors_data = array();
+			foreach ( $notable_colors as $notable_color ){
+				$sass_color = nebula()->sass_color($notable_color);
+				$customizer_color = get_theme_mod(str_replace('$', 'nebula_', $notable_color));
+				$hex_color = ( !empty($sass_color) )? rtrim($sass_color, ';') : $customizer_color;
+
+				$notable_colors_data[$notable_color] = array(
+					'name' => ucwords(str_replace(array('$', '_'), array('', ' '), $notable_color)),
+					'sass' => $sass_color,
+					'customizer' => $customizer_color,
+					'hex' => $hex_color,
+					'rgb' => $this->hex2rgb($hex_color),
+					'ratios' => array(
+						'white' => number_format($this->contrast($hex_color, '#ffffff'), 2, '.', ''),
+						'black' => number_format($this->contrast($hex_color, '#000000'), 2, '.', ''),
+					),
+				);
+
+				//Determine readable color
+				if ( $notable_colors_data[$notable_color]['ratios']['white'] > $notable_colors_data[$notable_color]['ratios']['black'] ){
+					$notable_colors_data[$notable_color]['readable'] = '#fff';
+				} else {
+					$notable_colors_data[$notable_color]['readable'] = '#000';
+				}
+			}
 			?>
 				<div class="nebula-metabox-row">
-					<div class="design-reference-col">
-						<a class="color-block primary" href="https://www.colorhexa.com/<?php echo ltrim($primary_hex, '#'); ?>" target="_blank">
-							<span class="tee">T</span>
-							<span class="color-contrast-ratio light"><?php echo $primary_ratio_white; ?> <i class="fa fa-<?php echo ( $primary_ratio_white >= 4.5 )? 'check' : 'times'; ?>"></i></span>
-							<span class="color-contrast-ratio dark"><?php echo $primary_ratio_black; ?> <i class="fa fa-<?php echo ( $primary_ratio_black >= 4.5 )? 'check' : 'times'; ?>"></i></span>
-						</a>
-						<div>
-							<strong>Primary Color</strong><br />
-							Hex <?php echo $primary_hex; ?><br />
-							RGB <?php echo $primary_rgb['r'] . ', ' . $primary_rgb['g'] . ', ' . $primary_rgb['b']; ?><br />
+					<?php foreach ( $notable_colors_data as $notable_color_data ): ?>
+						<div class="design-reference-col">
+							<a class="color-block" href="https://www.colorhexa.com/<?php echo ltrim($notable_color_data['hex'], '#'); ?>" target="_blank" style="background-color: <?php echo $notable_color_data['hex']; ?>;">
+								<span class="tee" style="color: <?php echo $notable_color_data['readable']; ?>;">T</span>
+								<span class="color-contrast-ratio light"><?php echo $notable_color_data['ratios']['white']; ?> <i class="fa fa-<?php echo ( $notable_color_data['ratios']['white'] >= 4.5 )? 'check' : 'times'; ?>"></i></span>
+								<span class="color-contrast-ratio dark"><?php echo $notable_color_data['ratios']['black']; ?> <i class="fa fa-<?php echo ( $notable_color_data['ratios']['black'] >= 4.5 )? 'check' : 'times'; ?>"></i></span>
+							</a>
+							<div>
+								<strong><?php echo $notable_color_data['name']; ?></strong><br />
+								Hex <?php echo $notable_color_data['hex']; ?><br />
+								RGB <?php echo $notable_color_data['rgb']['r'] . ', ' . $notable_color_data['rgb']['g'] . ', ' . $notable_color_data['rgb']['b']; ?><br />
+							</div>
 						</div>
-					</div>
-					<div class="design-reference-col">
-						<a class="color-block secondary" href="https://www.colorhexa.com/<?php echo ltrim($secondary_hex, '#'); ?>" target="_blank">
-							<span class="tee">T</span>
-							<span class="color-contrast-ratio light"><?php echo $secondary_ratio_white; ?> <i class="fa fa-<?php echo ( $secondary_ratio_white >= 4.5 )? 'check' : 'times'; ?>"></i></span>
-							<span class="color-contrast-ratio dark"><?php echo $secondary_ratio_black; ?> <i class="fa fa-<?php echo ( $secondary_ratio_black >= 4.5 )? 'check' : 'times'; ?>"></i></span>
-						</a>
-						<div>
-							<strong>Secondary Color</strong><br />
-							Hex <?php echo $secondary_hex; ?><br />
-							RGB <?php echo $secondary_rgb['r'] . ', ' . $secondary_rgb['g'] . ', ' . $secondary_rgb['b']; ?><br />
-						</div>
-					</div>
+					<?php endforeach; ?>
 				</div>
 			<?php
 
