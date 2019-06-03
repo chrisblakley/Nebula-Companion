@@ -27,7 +27,7 @@ if ( !trait_exists('Companion_Scripts') ){
 			wp_register_style('nebula-companion-admin', $this->plugin_directory_uri . 'assets/css/admin.css', null, nebula()->version('full'), 'all');
 			wp_register_style('nebula-companion-flags', $this->plugin_directory_uri . 'assets/css/flags.css', null, nebula()->version('full'), 'all');
 
-			nebula()->register_script('nebula-companion', $this->plugin_directory_uri . 'assets/js/companion.js', 'defer', array('jquery-core', 'nebula-nebula'), nebula()->version('full'), true); //nebula.js (in the parent Nebula theme) is defined as a dependant here.
+			nebula()->register_script('nebula-companion', $this->plugin_directory_uri . 'assets/js/companion.js', array('defer'), array('jquery-core', 'nebula-nebula'), nebula()->version('full'), true); //nebula.js (in the parent Nebula theme) is defined as a dependant here.
 		}
 
 		//Enqueue frontend scripts
