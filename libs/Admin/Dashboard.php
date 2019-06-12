@@ -40,10 +40,10 @@ if ( !trait_exists('Companion_Dashboard') ){
 					'sass' => $sass_color,
 					'customizer' => $customizer_color,
 					'hex' => $hex_color,
-					'rgb' => $this->hex2rgb($hex_color),
+					'rgb' => nebula()->hex2rgb($hex_color),
 					'ratios' => array(
-						'white' => number_format($this->contrast($hex_color, '#ffffff'), 2, '.', ''),
-						'black' => number_format($this->contrast($hex_color, '#000000'), 2, '.', ''),
+						'white' => number_format(nebula()->contrast($hex_color, '#ffffff'), 2, '.', ''),
+						'black' => number_format(nebula()->contrast($hex_color, '#000000'), 2, '.', ''),
 					),
 				);
 
@@ -54,6 +54,7 @@ if ( !trait_exists('Companion_Dashboard') ){
 					$notable_colors_data[$notable_color]['readable'] = '#000';
 				}
 			}
+
 			?>
 				<div class="nebula-metabox-row">
 					<?php foreach ( $notable_colors_data as $notable_color_data ): ?>

@@ -58,7 +58,6 @@ if ( !trait_exists('Companion_Scripts') ){
 
 		public function companion_brain($brain){
 			$brain['site']['options']['advanced_form_identification'] = nebula()->get_option('advanced_form_identification');
-			$brain['analytics']['dimensions']['browseMode'] = nebula()->get_option('cd_privacymode');
 
 			return $brain;
 		}

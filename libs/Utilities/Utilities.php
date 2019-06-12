@@ -24,8 +24,6 @@ if ( !trait_exists('Companion_Utilities') ){
 			add_action('nebula_options_saved', array($this, 'start_audit_mode'));
 			add_action('wp_footer', array($this, 'audit_mode_output'), 9999); //Late execution as possible
 
-			add_action('nebula_ga_before_send_pageview', array($this, 'analytics_before_pageview'));
-
 			add_filter('nebula_poi', array($this, 'log_provided_poi'));
 
 
@@ -430,60 +428,6 @@ if ( !trait_exists('Companion_Utilities') ){
 			return false;
 		}
 
-		//Automatically convert HEX colors to RGB.
-		public function hex2rgb($color){
-			$override = apply_filters('pre_hex2rgb', false, $color);
-			if ( $override !== false ){return $override;}
-
-			if ( $color[0] == '#' ){
-				$color = substr($color, 1);
-			}
-
-			if ( strlen($color) == 6 ){
-				list($r, $g, $b) = array($color[0] . $color[1], $color[2] . $color[3], $color[4] . $color[5]);
-			} elseif ( strlen($color) == 3 ){
-				list($r, $g, $b) = array($color[0] . $color[0], $color[1] . $color[1], $color[2] . $color[2]);
-			} else {
-				return false;
-			}
-
-			$r = hexdec($r);
-			$g = hexdec($g);
-			$b = hexdec($b);
-
-			return array('r' => $r, 'g' => $g, 'b' => $b);
-		}
-
-		//Calculate the linear channel of a color
-		public function linear_channel($color){
-			$color = $color/255;
-
-			if ( $color < 0.03928 ){
-				return $color/12.92;
-			}
-
-			return pow(($color + 0.055)/1.055, 2.4);
-		}
-
-		//Calculate the luminance for a color.
-		public function luminance($color){
-			$rgb = $this->hex2rgb($color);
-
-			$red = $this->linear_channel($rgb['r'] + 1);
-			$green = $this->linear_channel($rgb['g'] + 1);
-			$blue = $this->linear_channel($rgb['b'] + 1);
-
-			return 0.2126 * $red + 0.7152 * $green + 0.0722 * $blue;
-		}
-
-		//Calculate the contrast ratio between two colors.
-		public function contrast($front, $back){
-			$backLum = $this->luminance($back) + 0.05;
-			$foreLum = $this->luminance($front) + 0.05;
-
-			return max(array($backLum, $foreLum)) / min(array($backLum, $foreLum));
-		}
-
 		//Time all core WordPress hooks
 		//@todo: Why isn't this getting called for all hooks?
 		public function all_wp_hook_times(){
@@ -579,29 +523,6 @@ if ( !trait_exists('Companion_Utilities') ){
 						}
 					});
 				</script>
-				<?php
-			}
-		}
-
-		//Additional Google Analytics detections
-		public function analytics_before_pageview(){
-			//Detect privacy mode
-			//Note: in Chrome 76 (or thereabouts), this method of detecting incognito mode will no longer work: https://chromium-review.googlesource.com/c/chromium/src/+/1472290/4#message-a0db53a4175933b3b5dd4568d52493c9fdc7bca0
-			if ( nebula()->get_option('cd_privacymode') ){
-				?>
-					var fileSystem = window.RequestFileSystem || window.webkitRequestFileSystem;
-					if ( fileSystem ){
-						fileSystem(
-							window.TEMPORARY,
-							100,
-							function(){
-								ga('set', nebula.analytics.dimensions.browseMode, 'Normal');
-							},
-							function(){
-								ga('set', nebula.analytics.dimensions.browseMode, 'Private');
-							}
-						);
-					}
 				<?php
 			}
 		}
