@@ -1,11 +1,11 @@
 @import $parent_partials_directory + 'variables';
 @import $parent_partials_directory + 'mixins';
 
-body.nebula-wireframing-wireframe {@include prefix((filter: grayscale(100%)));} //Greyscale only when wireframe is active and being viewed
+body.nebula-wireframing-wireframe {filter: grayscale(100%);} //Greyscale only when wireframe is active and being viewed
 
 #wireframing-bar {position: relative; background: black; color: #fff; padding-top: 5px; padding-bottom: 5px;}
 
-img, a.logocon {@include prefix((filter: none));}
+img, a.logocon {filter: none;}
 
 .fpo-component {background: #e2e2e2; padding: 5px 10px 1px 10px;}
 .fpo-component-con {

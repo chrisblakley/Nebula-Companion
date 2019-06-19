@@ -1,22 +1,8 @@
+/*
 @import $parent_partials_directory + '/variables';
 @import $child_partials_directory + '/variables';
 @import $parent_partials_directory + '/functions';
 @import $parent_partials_directory + '/mixins';
 @import $parent_partials_directory + '/helpers';
+*/
 
-//Design Reference metabox
-.design-reference-col {display: flex; margin-bottom: 15px; margin-right: 20px;
-	.color-block {display: flex; flex-direction: column; width: 50px; padding-top: 10px; padding-bottom: 4px; text-align: center; margin-right: 6px;
-		&.primary {background: $primary_color; color: high-contrast-color($primary_color);}
-		&.secondary {background: $secondary_color; color: high-contrast-color($secondary_color);}
-
-		span {font-size: 10px; line-height: 1;
-			&.tee {font-size: 24px; font-family: serif; padding-bottom: 10px; border-bottom: 1px dotted #fff;}
-		}
-	}
-
-	.color-contrast-ratio {display: inline-block; margin-top: 2px; padding: 1px 5px; font-size: 10px;
-		&.light {color: #fff;}
-		&.dark {color: #000;}
-	}
-}

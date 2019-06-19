@@ -29,9 +29,6 @@ if ( !trait_exists('Companion_Options') ){
 			$default_options['staging_theme'] = '';
 			$default_options['production_theme'] = '';
 			$default_options['check_tor'] = 0;
-			$default_options['design_reference_metabox'] = 0;
-			$default_options['design_reference_link'] = '';
-			$default_options['additional_design_references'] = '';
 			$default_options['advanced_warnings'] = 0;
 			$default_options['audit_mode'] = 0;
 			$default_options['plugin_update_notification'] = 1;
@@ -87,9 +84,8 @@ if ( !trait_exists('Companion_Options') ){
 		public function companion_options_metaboxes(){
 			$current_screen = get_current_screen();
 			if ( $current_screen->base === 'appearance_page_nebula_options' ){
-				add_meta_box('nebula_companion_detection_metabox', 'Advanced Detection', array($this, 'nebula_companion_detection_metabox'), 'nebula_options', 'functions');
+				add_meta_box('nebula_companion_detection_metabox', 'Advanced Detection', array($this, 'nebula_companion_detection_metabox'), 'nebula_options', 'functions_side');
 				add_meta_box('nebula_companion_prototyping_metabox', 'Prototyping', array($this, 'nebula_companion_prototyping_metabox'), 'nebula_options', 'advanced');
-				add_meta_box('nebula_companion_design_references_metabox', 'Design References', array($this, 'nebula_companion_design_references_metabox'), 'nebula_options', 'administration');
 			}
 		}
 
@@ -148,30 +144,6 @@ if ( !trait_exists('Companion_Options') ){
 					<p class="nebula-help-text short-help form-text text-muted">Visualize (and list) common issues on the front-end. (Default: <?php echo nebula()->user_friendly_default('audit_mode'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">This option automatically disables itself 1 hour after last use.</p>
 					<p class="option-keywords">major page speed impact companion</p>
-				</div>
-			<?php
-		}
-
-		public function nebula_companion_design_references_metabox($nebula_options){
-			?>
-				<div class="form-group">
-					<input type="checkbox" name="nebula_options[design_reference_metabox]" id="design_reference_metabox" value="1" <?php checked('1', !empty($nebula_options['design_reference_metabox'])); ?> /><label for="design_reference_metabox">Design Reference Metabox</label>
-					<p class="nebula-help-text short-help form-text text-muted">Show the Design Reference dashboard metabox. (Default: <?php echo nebula()->user_friendly_default('design_reference_metabox'); ?>)</p>
-					<p class="option-keywords">companion</p>
-				</div>
-
-				<div class="form-group">
-					<label for="design_reference_link">Design File(s) URL</label>
-					<input type="text" name="nebula_options[design_reference_link]" id="design_reference_link" class="form-control nebula-validate-url" value="<?php echo $nebula_options['design_reference_link']; ?>" placeholder="http://" />
-					<p class="nebula-help-text short-help form-text text-muted">Link to the design file(s).</p>
-					<p class="option-keywords">companion</p>
-				</div>
-
-				<div class="form-group">
-					<label for="additional_design_references">Additional Design Notes</label>
-					<textarea name="nebula_options[additional_design_references]" id="additional_design_references" class="form-control nebula-validate-textarea" rows="2"><?php echo $nebula_options['additional_design_references']; ?></textarea>
-					<p class="nebula-help-text short-help form-text text-muted">Add design references (such as links to brand guides) to the admin dashboard</p>
-					<p class="option-keywords">companion</p>
 				</div>
 			<?php
 		}
