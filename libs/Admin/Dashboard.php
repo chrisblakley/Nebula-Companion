@@ -124,44 +124,6 @@ if ( !trait_exists('Companion_Dashboard') ){
 			nebula()->timer('Nebula Companion Github Dashboard', 'end');
 		}
 
-		//Add more data to the user dashboard
-		public function more_user_dashboard_data(){
-			nebula()->timer('Nebula Companion User Dashboard');
-			//IP Location
-			if ( $this->ip_location() ){
-				$ip_location = $this->ip_location('all');
-
-				if ( !empty($ip_location) ){
-					$location_name = '';
-					if ( !empty($ip_location->city) ){
-						$location_name .= $ip_location->city . ', ';
-					}
-					if ( !empty($ip_location->region_name) ){
-						$location_name .= $ip_location->region_name;
-					}
-					if ( empty($location_name) && !empty($ip_location->country_name) ){
-						$location_name = $ip_location->country_name;
-					}
-
-					echo '<li><i class="fas fa-fw fa-location-arrow"></i> IP Location: ' . $ip_location->location->country_flag_emoji . ' <strong>' . $location_name . '</strong></li>';
-				} else {
-					echo '<li><i class="fas fa-fw fa-location-arrow"></i> IP Location: <em>GeoIP error or rate limit exceeded.</em></li>';
-				}
-			}
-
-			//Weather
-			if ( nebula()->get_option('weather') ){
-				$ip_zip = ( $this->ip_location() )? $this->ip_location('zip') : '';
-				$temperature = nebula_companion()->weather($ip_zip, 'temp');
-				if ( !empty($temperature) ){
-					echo '<li><i class="fas fa-fw fa-cloud"></i> Weather: <strong>' . $temperature . '&deg;F ' . $this->weather($ip_zip, 'conditions') . '</strong></li>';
-				} else {
-					echo '<li><i class="fas fa-fw fa-cloud"></i> Weather: <em>API error for zip code ' . $ip_zip . '.</em></li>';
-				}
-			}
-			nebula()->timer('Nebula Companion User Dashboard', 'end');
-		}
-
 		public function more_directory_sizes(){
 			if ( nebula()->get_option('prototype_mode') ){
 				if ( nebula()->get_option('wireframe_theme') ){

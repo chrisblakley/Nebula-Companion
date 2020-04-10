@@ -7,55 +7,6 @@ trait Companion_Functions {
 		global $pagenow;
 
 		add_filter('nebula_warnings', array($this, 'nebula_companion_warnings'));
-		add_filter('wpcf7_special_mail_tags', array($this, 'cf7_companion_special_mail_tags'), 10, 3);
-		add_filter('nebula_cf7_debug_data', array($this, 'nebula_companion_cf7_debug_data'));
-	}
-
-	//Add more CF7 special mail tags
-	public function cf7_companion_special_mail_tags($output, $name, $html){
-		$submission = WPCF7_Submission::get_instance();
-		if ( !$submission ){
-			return $output;
-		}
-
-		//IP Geolocation
-		if ( $name === '_nebula_ip_geo' ){
-			if ( $this->ip_location() ){
-				$ip_location = $this->ip_location('all');
-				return $ip_location->city . ', ' . $ip_location->region_name;
-			} else {
-				return '';
-			}
-		}
-
-		//Weather
-		if ( $name === '_nebula_weather' ){
-			if ( $this->get_option('weather') ){
-				$ip_zip = ( $this->ip_location() )? $this->ip_location('zip') : '';
-				$temperature = $this->weather($ip_zip, 'temp');
-				if ( !empty($temperature) ){
-					return 'Weather: ' . $temperature . '&deg;F ' . $this->weather($ip_zip, 'conditions');
-				} else {
-					return '';
-				}
-			} else {
-				return '';
-			}
-		}
-
-		return $output;
-	}
-
-
-
-	public function nebula_companion_cf7_debug_data($debug_data){
-
-		if ( $this->ip_location() ){
-			$ip_location = $this->ip_location('all');
-			$debug_data .= 'IP Geolocation: ' . $ip_location->city . ', ' . $ip_location->region_name . '<br>';
-		}
-
-		return $debug_data;
 	}
 
 	public function is_auditing(){
