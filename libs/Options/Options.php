@@ -15,6 +15,9 @@ if ( !trait_exists('Companion_Options') ){
 			add_filter('nebula_options_interface_preset_filters', array($this, 'companion_preset_option_filters'));
 			add_action('nebula_options_admin_notifications_metabox', array($this, 'companion_plugin_update_option'));
 			add_action('nebula_options_apis_metabox', array($this, 'companion_apis'));
+			add_action('nebula_options_custom_dimensions_metabox', array($this, 'companion_custom_dimensions'));
+
+			add_action('nebula_options_staff_users_metabox', array($this, 'companion_administrative_options'));
 		}
 
 		//Add Nebula Companion options
@@ -32,6 +35,8 @@ if ( !trait_exists('Companion_Options') ){
 			$default_options['advanced_warnings'] = 0;
 			$default_options['audit_mode'] = 0;
 			$default_options['plugin_update_notification'] = 1;
+			$default_options['cd_notablepoi'] = '';
+			$default_options['notableiplist'] = '';
 
 			return $default_options;
 		}
@@ -144,6 +149,36 @@ if ( !trait_exists('Companion_Options') ){
 					<p class="nebula-help-text short-help form-text text-muted">Visualize (and list) common issues on the front-end. (Default: <?php echo nebula()->user_friendly_default('audit_mode'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">This option automatically disables itself 1 hour after last use.</p>
 					<p class="option-keywords">major page speed impact companion</p>
+				</div>
+			<?php
+		}
+
+		public function companion_custom_dimensions($nebula_options){
+			$dimension_regex = '^dimension([0-9]{1,3})$';
+
+			?>
+				<div class="form-group">
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<div class="input-group-text">Notable POI</div>
+						</div>
+						<input type="text" name="nebula_options[cd_notablepoi]" id="cd_notablepoi" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_notablepoi']; ?>" />
+					</div>
+					<p class="nebula-help-text short-help form-text text-muted">Stores named locations when detected. Scope: User</p>
+					<p class="nebula-help-text more-help form-text text-muted">Stores named IP addresses (from the Administration tab). Also passes data using the ?poi query string (useful for email marketing using personalization within links). Also sends value of input fields with class "nebula-poi" on form submits (when applicable).</p>
+					<p class="option-keywords">recommended custom dimension</p>
+				</div>
+			<?php
+		}
+
+		public function companion_administrative_options($nebula_options){
+			?>
+				<div class="form-group">
+					<label for="notableiplist">Notable IPs</label>
+					<textarea name="nebula_options[notableiplist]" id="notableiplist" class="form-control nebula-validate-textarea" rows="6" placeholder="192.168.0.1 Name Here"><?php echo $nebula_options['notableiplist']; ?></textarea>
+					<p class="nebula-help-text short-help form-text text-muted">A list of named IP addresses. Enter each IP (or RegEx to match) on a new line with a space separating the IP address and name.</p>
+					<p class="nebula-help-text more-help form-text text-muted">Name IPs by location to avoid <a href="https://support.google.com/analytics/answer/2795983" target="_blank" rel="noopener">Personally Identifiable Information (PII)</a> issues (Do not use peoples' names). Be sure to set up a Custom Dimension in Google Analytics and add the dimension index in the Analytics tab!<br />Tip: IP data can be sent with <a href="https://gearside.com/nebula/examples/contact-form-7/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=notable+ips+help<?php echo nebula()->get_user_info('user_email', array('prepend' => '&nv-email=')); ?>" target="_blank" rel="noopener">Nebula contact forms</a>!</p>
+					<p class="option-keywords">recommended</p>
 				</div>
 			<?php
 		}

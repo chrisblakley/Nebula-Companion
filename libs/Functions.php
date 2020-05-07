@@ -6,8 +6,51 @@ trait Companion_Functions {
 	public function hooks(){
 		global $pagenow;
 
+		add_action('nebula_ga_before_send_pageview', array($this, 'poi_custom_dimension'));
+		add_filter('nebula_hubspot_identify', array($this, 'poi_hubspot'), 10, 1);
+		add_filter('nebula_cf7_debug_data', array($this, 'poi_cf7_debug_info'), 10, 1);
+
+		add_filter('nebula_measurement_protocol_custom_definitions', array($this, 'poi_measurement_protocol'), 10, 1);
+
 		add_filter('nebula_warnings', array($this, 'nebula_companion_warnings'));
 	}
+
+
+
+
+
+
+	public function poi_custom_dimension(){
+		//Notable POI (IP Addresses)
+		$poi = $this->poi();
+		if ( nebula()->get_option('cd_notablepoi') && !empty($poi) ){
+			echo 'ga("set", nebula.analytics.dimensions.poi, "' . esc_html($poi) . '");';
+		}
+	}
+
+	public function poi_hubspot($hubspot_identify){
+		$hubspot_identify['notable_poi'] = $this->poi();
+		return $hubspot_identify;
+	}
+
+	public function poi_measurement_protocol($common_parameters){
+		if ( nebula()->get_option('cd_notablepoi') ){
+			$common_parameters['cd' . nebula()->ga_definition_index(nebula()->get_option('cd_notablepoi'))] = $this->poi();
+		}
+
+		return $common_parameters;
+	}
+
+	public function poi_cf7_debug_info($debug_data){
+		$notable_poi = $this->poi();
+		if ( !empty($notable_poi) ){
+			$debug_data .= $notable_poi . PHP_EOL;
+		}
+
+		return $debug_data;
+	}
+
+
 
 	public function is_auditing(){
 		if ( nebula()->get_option('audit_mode') || (isset($_GET['audit']) && nebula()->is_dev()) ){
@@ -32,7 +75,7 @@ trait Companion_Functions {
 				$nebula_warnings[] = array(
 					'category' => 'Nebula Companion',
 					'level' => 'error',
-					'description' => '<a href="themes.php?page=nebula_options&tab=advanced&option=audit_mode">Audit Mode</a> is enabled! This is visible to all visitors. It will automatically be disabled in ' . human_time_diff($nebula_audit_mode_expiration+HOUR_IN_SECONDS) . '.',
+					'description' => '<i class="fas fa-microscope"></i> <a href="themes.php?page=nebula_options&tab=advanced&option=audit_mode">Audit Mode</a> is enabled! This is visible to all visitors. It will automatically be disabled in ' . human_time_diff($nebula_audit_mode_expiration+HOUR_IN_SECONDS) . '.',
 					'url' => get_admin_url() . 'themes.php?page=nebula_options&tab=advanced&option=audit_mode'
 				);
 			}
@@ -60,7 +103,7 @@ trait Companion_Functions {
 					$nebula_warnings[] = array(
 						'category' => 'Nebula Companion',
 						'level' => 'warn',
-						'description' => 'Default contact email domain does not match website. This email address will appear in metadata, so please verify this is acceptable.',
+						'description' => '<i class="fas fa-address-card"></i> Default contact email domain does not match website. This email address will appear in metadata, so please verify this is acceptable.',
 						'url' => get_admin_url() . 'themes.php?page=nebula_options&tab=metadata&option=contact_email'
 					);
 				}
@@ -71,7 +114,7 @@ trait Companion_Functions {
 				$nebula_warnings[] = array(
 					'category' => 'Nebula Companion',
 					'level' => 'warn',
-					'description' => 'The WordPress core readme.html file exists (which exposes version information) and should be deleted.',
+					'description' => '<i class="far fa-file-alt"></i> The WordPress core readme.html file exists (which exposes version information) and should be deleted.',
 				);
 			}
 
@@ -80,7 +123,7 @@ trait Companion_Functions {
 				$nebula_warnings[] = array(
 					'category' => 'Nebula Companion',
 					'level' => 'warn',
-					'description' => 'The session directory (' . session_save_path() . ') is not writable. Session data can not be used!',
+					'description' => '<i class="fas fa-server"></i> The session directory (' . session_save_path() . ') is not writable. Session data can not be used!',
 				);
 			}
 

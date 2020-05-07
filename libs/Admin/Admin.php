@@ -14,6 +14,9 @@ if ( !trait_exists('Companion_Admin') ){
 			if ( nebula()->is_admin_page() ){ //Admin side
 				$this->Companion_DashboardHooks(); //Register Dashboard hooks
 				add_action('admin_init', array($this, 'plugin_json'));
+
+				add_filter('nebula_user_column_ip', array($this, 'user_ip_poi'), 10, 1);
+
 			} else { //Front-end for admin users
 				add_action('admin_bar_menu',  array($this, 'companion_admin_bar_menus'), 801);
 			}
@@ -54,6 +57,16 @@ if ( !trait_exists('Companion_Admin') ){
 			}
 
 			return true;
+		}
+
+		//Append the POI of an IP address in the user column
+		public function user_ip_poi($last_ip){
+			$notable_poi = $this->poi($last_ip);
+			if ( !empty($notable_poi) ){
+				$last_ip .= '<br><small>(' . esc_html($notable_poi) . ')</small>';
+			}
+
+			return $last_ip;
 		}
 	}
 }
