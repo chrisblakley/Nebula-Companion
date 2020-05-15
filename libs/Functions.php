@@ -75,7 +75,7 @@ trait Companion_Functions {
 				$nebula_warnings[] = array(
 					'category' => 'Nebula Companion',
 					'level' => 'error',
-					'description' => '<i class="fas fa-microscope"></i> <a href="themes.php?page=nebula_options&tab=advanced&option=audit_mode">Audit Mode</a> is enabled! This is visible to all visitors. It will automatically be disabled in ' . human_time_diff($nebula_audit_mode_expiration+HOUR_IN_SECONDS) . '.',
+					'description' => '<i class="fas fa-fw fa-microscope"></i> <a href="themes.php?page=nebula_options&tab=advanced&option=audit_mode">Audit Mode</a> is enabled! This is visible to all visitors. It will automatically be disabled in ' . human_time_diff($nebula_audit_mode_expiration+HOUR_IN_SECONDS) . '.',
 					'url' => get_admin_url() . 'themes.php?page=nebula_options&tab=advanced&option=audit_mode'
 				);
 			}
@@ -103,7 +103,7 @@ trait Companion_Functions {
 					$nebula_warnings[] = array(
 						'category' => 'Nebula Companion',
 						'level' => 'warn',
-						'description' => '<i class="fas fa-address-card"></i> Default contact email domain does not match website. This email address will appear in metadata, so please verify this is acceptable.',
+						'description' => '<i class="fas fa-fw fa-address-card"></i> Default contact email domain does not match website. This email address will appear in metadata, so please verify this is acceptable.',
 						'url' => get_admin_url() . 'themes.php?page=nebula_options&tab=metadata&option=contact_email'
 					);
 				}
@@ -114,7 +114,7 @@ trait Companion_Functions {
 				$nebula_warnings[] = array(
 					'category' => 'Nebula Companion',
 					'level' => 'warn',
-					'description' => '<i class="far fa-file-alt"></i> The WordPress core readme.html file exists (which exposes version information) and should be deleted.',
+					'description' => '<i class="far fa-fw fa-file-alt"></i> The WordPress core readme.html file exists (which exposes version information) and should be deleted.',
 				);
 			}
 
@@ -123,7 +123,7 @@ trait Companion_Functions {
 				$nebula_warnings[] = array(
 					'category' => 'Nebula Companion',
 					'level' => 'warn',
-					'description' => '<i class="fas fa-server"></i> The session directory (' . session_save_path() . ') is not writable. Session data can not be used!',
+					'description' => '<i class="fas fa-fw fa-server"></i> The session directory (' . session_save_path() . ') is not writable. Session data can not be used!',
 				);
 			}
 
@@ -207,13 +207,13 @@ trait Companion_Functions {
 												$nebula_warnings[] = array(
 													'category' => 'Nebula Companion',
 													'level' => 'warn',
-													'description' => 'Possible debug output in <strong>' . str_replace(get_stylesheet_directory(), '', dirname($filepath)) . '/' . basename($filepath) . '</strong> on <strong>line ' . ($line_number+1) . '</strong>.'
+													'description' => '<i class="fas fa-fw fa-bug"></i> Possible debug output in <strong>' . str_replace(get_stylesheet_directory(), '', dirname($filepath)) . '/' . basename($filepath) . '</strong> on <strong>line ' . ($line_number+1) . '</strong>.'
 												);
 											} elseif ( $category === 'bootstrap_js' ){
 												$nebula_warnings[] = array(
 													'category' => 'Nebula Companion',
 													'level' => 'warn',
-													'description' => 'Bootstrap JS is disabled, but is possibly needed in <strong>' . str_replace(get_stylesheet_directory(), '', dirname($filepath)) . '/' . basename($filepath) . '</strong> on <strong>line ' . $line_number . '</strong>.',
+													'description' => '<i class="fab fa-fw fa-bootstrap"></i> Bootstrap JS is disabled, but is possibly needed in <strong>' . str_replace(get_stylesheet_directory(), '', dirname($filepath)) . '/' . basename($filepath) . '</strong> on <strong>line ' . $line_number . '</strong>.',
 													'url' => get_admin_url() . 'themes.php?page=nebula_options&tab=functions&option=allow_bootstrap_js'
 												);
 											}
@@ -231,7 +231,7 @@ trait Companion_Functions {
 				$nebula_warnings[] = array(
 					'category' => 'Nebula Companion',
 					'level' => 'warn',
-					'description' => 'Missing sitemap XML'
+					'description' => '<i class="fas fa-fw fa-sitemap"></i> Missing sitemap XML'
 				);
 			}
 
@@ -242,7 +242,7 @@ trait Companion_Functions {
 				$nebula_warnings[] = array(
 					'category' => 'Nebula Companion',
 					'level' => 'warn',
-					'description' => $word_count_warning,
+					'description' => '<i class="far fa-fw fa-file"></i> ' . $word_count_warning,
 					'url' => get_edit_post_link(get_the_id())
 				);
 			}
@@ -252,7 +252,7 @@ trait Companion_Functions {
 				$nebula_warnings[] = array(
 					'category' => 'Nebula Companion',
 					'level' => 'warn',
-					'description' => 'Yoast SEO plugin is not active',
+					'description' => '<i class="fas fa-fw fa-search-plus"></i> Yoast SEO plugin is not active',
 					'url' => get_admin_url() . 'themes.php?page=tgmpa-install-plugins'
 				);
 			}
@@ -263,7 +263,7 @@ trait Companion_Functions {
 			$nebula_warnings[] = array(
 				'category' => 'Nebula Companion',
 				'level' => 'warn',
-				'description' => '<a href="themes.php?page=nebula_options&tab=advanced&option=prototype_mode">Prototype Mode</a> is enabled (' . ucwords($this->dev_phase()) . ')!',
+				'description' => '<i class="far fa-fw fa-clone"></i> <a href="themes.php?page=nebula_options&tab=advanced&option=prototype_mode">Prototype Mode</a> is enabled (' . ucwords($this->dev_phase()) . ')!',
 				'url' => get_admin_url() . 'themes.php?page=nebula_options&tab=advanced&option=prototype_mode'
 			);
 		}
@@ -273,7 +273,7 @@ trait Companion_Functions {
 			$nebula_warnings[] = array(
 				'category' => 'Nebula Companion',
 				'level' => 'error',
-				'description' => '<a href="themes.php?page=nebula_options&tab=advanced&option=prototype_mode">Prototype Mode</a> is disabled, but <a href="plugins.php">Multiple Theme plugin</a> is still active.',
+				'description' => '<i class="far fa-fw fa-clone"></i> <a href="themes.php?page=nebula_options&tab=advanced&option=prototype_mode">Prototype Mode</a> is disabled, but <a href="plugins.php">Multiple Theme plugin</a> is still active.',
 				'url' => get_admin_url() . 'plugins.php'
 			);
 		}
