@@ -5,7 +5,10 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Companion_Dashboard') ){
 	trait Companion_Dashboard {
 		public function hooks(){
-			add_action('wp_dashboard_setup', array($this, 'github_metabox'));
+			if ( current_user_can('editor') ){
+				add_action('wp_dashboard_setup', array($this, 'github_metabox'));
+			}
+
 			add_action('nebula_dev_dashboard_directories', array($this, 'more_directory_sizes'));
 			add_filter('nebula_directory_search_options', array($this, 'search_prototype_directories'));
 			add_filter('nebula_search_directories', array($this, 'add_prototyping_search_directories'));

@@ -3,7 +3,7 @@
 Plugin Name: Nebula Companion
 Plugin URI: https://gearside.com/nebula/
 Description: Advanced features for use with the Nebula theme.
-Version: 8.0.15.4694
+Version: 8.1.19.6421
 Author: Chris Blakley
 Author URI: https://gearside.com/nebula
 */
