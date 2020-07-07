@@ -578,7 +578,7 @@ if ( !trait_exists('Companion_Utilities') ){
 
 								//Check issue count (do this last)
 								if ( jQuery("#audit-results ul li").length <= 0 ){
-									jQuery("#audit-results").append('<p><strong><i class="fas fa-fw fa-check"></i> No issues were found on this page.</strong> Be sure to check other pages (and run <a href="https://gearside.com/nebula/get-started/checklists/testing-checklist/" target="_blank">more authoritative tests</a>)!</p>');
+									jQuery("#audit-results").append('<p><strong><i class="fas fa-fw fa-check"></i> No issues were found on this page.</strong> Be sure to check other pages (and run <a href="https://nebula.gearside.com/get-started/checklists/testing-checklist/" target="_blank">more authoritative tests</a>)!</p>');
 								} else {
 									jQuery("#audit-results").append('<p><strong><i class="fas fa-fw fa-times"></i> Found issues: ' + jQuery("#audit-results ul li").length + '<strong></p>');
 								}

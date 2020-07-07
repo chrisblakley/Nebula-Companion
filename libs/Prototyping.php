@@ -111,7 +111,7 @@ if ( !trait_exists('Companion_Prototyping') ){
 				'parent' => 'nebula-prototype',
 				'id' => 'nebula-prototype-help',
 				'title' => '<i class="nebula-admin-fa far fa-fw fa-question"></i> Help & Documentation &raquo;',
-				'href' => 'https://gearside.com/nebula/functions/fpo/?utm_campaign=documentation&utm_medium=admin+bar&utm_source=prototyping+help',
+				'href' => 'https://nebula.gearside.com/functions/fpo/?utm_campaign=documentation&utm_medium=admin+bar&utm_source=prototyping+help',
 				'meta' => array('target' => '_blank', 'rel' => 'noopener')
 			));
 

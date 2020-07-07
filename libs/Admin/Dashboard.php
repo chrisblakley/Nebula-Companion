@@ -5,7 +5,7 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Companion_Dashboard') ){
 	trait Companion_Dashboard {
 		public function hooks(){
-			if ( current_user_can('editor') ){
+			if ( current_user_can('edit_others_posts') ){
 				add_action('wp_dashboard_setup', array($this, 'github_metabox'));
 			}
 
