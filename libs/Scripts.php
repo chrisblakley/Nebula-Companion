@@ -53,13 +53,13 @@ if ( !trait_exists('Companion_Scripts') ){
 		//Prep companion assets to lazy load too
 		public function lazy_load_companion_assets($assets){
 			$assets['styles']['nebula-flags'] = '.flag';
-			return $assets;
+			return $assets; //Always return on a filter or else it will break
 		}
 
 		public function companion_brain($brain){
 			$brain['site']['options']['advanced_form_identification'] = nebula()->get_option('advanced_form_identification');
 
-			return $brain;
+			return $brain; //Always return on a filter or else it will break
 		}
 	}
 }

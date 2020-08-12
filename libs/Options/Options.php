@@ -29,7 +29,6 @@ if ( !trait_exists('Companion_Options') ){
 			$default_options['staging_theme'] = '';
 			$default_options['production_theme'] = '';
 			$default_options['check_tor'] = 0;
-			$default_options['advanced_warnings'] = 0;
 			$default_options['audit_mode'] = 0;
 			$default_options['plugin_update_notification'] = 1;
 			$default_options['cd_notablepoi'] = '';
@@ -122,13 +121,6 @@ if ( !trait_exists('Companion_Options') ){
 					<p class="dependent-note hidden">This option is dependent on the use of the companion script (companion.js).</p>
 					<p class="nebula-help-text more-help form-text text-muted">This includes the use of query parameters and real-time form input listeners.</p>
 					<p class="option-keywords">gdpr hubspot companion script</p>
-				</div>
-
-				<div class="form-group">
-					<input type="checkbox" name="nebula_options[advanced_warnings]" id="advanced_warnings" value="1" <?php checked('1', !empty($nebula_options['advanced_warnings'])); ?> /><label for="advanced_warnings">Advanced Warnings</label>
-					<p class="nebula-help-text short-help form-text text-muted">Check for more strict Nebula warnings. (Default: <?php echo nebula()->user_friendly_default('advanced_warnings'); ?>)</p>
-					<p class="nebula-help-text more-help form-text text-muted">This will cause slightly longer page load times for admins and developers.</p>
-					<p class="option-keywords">minor page speed impact companion</p>
 				</div>
 
 				<div class="form-group">

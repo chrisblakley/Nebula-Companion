@@ -20,19 +20,8 @@ if ( !trait_exists('Companion_Admin') ){
 				add_filter('nebula_user_column_ip', array($this, 'user_ip_poi'), 10, 1);
 
 			} else { //Front-end for admin users
-				add_action('admin_bar_menu',  array($this, 'companion_admin_bar_menus'), 801);
+				//Do stuff here
 			}
-		}
-
-
-		//Top-level companion admin bar menu items
-		public function companion_admin_bar_menus($wp_admin_bar){
-			$wp_admin_bar->add_node(array(
-				'parent' => 'nebula',
-				'id' => 'nebula-audit',
-				'title' => '<i class="nebula-admin-fa fas fa-fw fa-list-alt"></i> Audit This Page',
-				'href' => esc_url(add_query_arg('audit', 'true')),
-			));
 		}
 
 		//Check for plugin updates
