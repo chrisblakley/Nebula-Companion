@@ -61,7 +61,7 @@ if ( !trait_exists('Companion_Dashboard') ){
 						If this is a private repo, the <strong>Client ID</strong> and <strong>Client Secret</strong> from your Github app must be added in <a href="themes.php?page=nebula_options&tab=functions&option=comments">Nebula Options</a> to retrieve issues.
 					</p>
 					<p>
-						<a href="<?php echo nebula()->get_option('github_url'); ?>/commits/master" target="_blank">Commits &raquo;</a><br />
+						<a href="<?php echo nebula()->get_option('github_url'); ?>/commits/main" target="_blank">Commits &raquo;</a><br />
 						<a href="<?php echo nebula()->get_option('github_url'); ?>/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc" target="_blank">Issues &raquo;</a><br />
 					</p>
 				<?php
@@ -81,7 +81,7 @@ if ( !trait_exists('Companion_Dashboard') ){
 				</p>';
 			}
 
-			echo '<p><small><a href="' . nebula()->get_option('github_url') . '/commits/master" target="_blank">View all commits &raquo;</a></small></p>';
+			echo '<p><small><a href="' . nebula()->get_option('github_url') . '/commits/main" target="_blank">View all commits &raquo;</a></small></p>';
 			echo '</div>';
 
 			//Issues

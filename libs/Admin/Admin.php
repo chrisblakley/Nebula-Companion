@@ -29,7 +29,7 @@ if ( !trait_exists('Companion_Admin') ){
 			if ( $this->allow_plugin_update() ){
 				require_once(get_template_directory() . '/inc/vendor/plugin-update-checker/plugin-update-checker.php'); //Use the library in the Nebula theme itself
 				$plugin_update_checker = Puc_v4_Factory::buildUpdateChecker(
-					'https://raw.githubusercontent.com/chrisblakley/Nebula-Companion/master/inc/nebula_plugin.json',
+					'https://raw.githubusercontent.com/chrisblakley/Nebula-Companion/main/inc/nebula_plugin.json',
 					$this->plugin_directory . 'nebula-companion.php',
 					'Nebula-Companion'
 				);

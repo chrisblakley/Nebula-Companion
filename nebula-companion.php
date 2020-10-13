@@ -3,14 +3,14 @@
 Plugin Name: Nebula Companion
 Plugin URI: https://nebula.gearside.com/
 Description: Advanced features for use with the Nebula theme.
-Version: 8.3.12.3763
+Version: 8.5.12.8709
 Author: Chris Blakley
 Author URI: https://nebula.gearside.com
 */
 
 //If Nebula is not active, leave this file.
 $active_theme = wp_get_theme();
-if ( $active_theme->get('Template') == 'Nebula-master' || $active_theme->get('Name') == 'Nebula' || $active_theme->get('Name') == 'Nebula Child' ){
+if ( $active_theme->get('Template') == 'Nebula-main' || $active_theme->get('Template') == 'Nebula-master' || $active_theme->get('Name') == 'Nebula' || $active_theme->get('Name') == 'Nebula Child' ){ //Remove "master" in Spring 2021
 	//Continue into the file.
 } else {
 	return;
@@ -94,9 +94,8 @@ if ( class_exists('Nebula_Companion') ){
 
 	//If Nebula is not active, leave this file.
 	$active_theme = wp_get_theme();
-	if ( $active_theme->get('Template') == 'Nebula-master' || $active_theme->get('Name') == 'Nebula' || $active_theme->get('Name') == 'Nebula Child' ){
+	if ( $active_theme->get('Template') == 'Nebula-main' || $active_theme->get('Template') == 'Nebula-master' || $active_theme->get('Name') == 'Nebula' || $active_theme->get('Name') == 'Nebula Child' ){ //Remove "master" in January 2021
 		//Continue into the file.
-		//echo '<p>allowable theme</p>';
 	} else {
 		return;
 	}
