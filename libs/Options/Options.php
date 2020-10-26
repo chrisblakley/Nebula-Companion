@@ -24,8 +24,6 @@ if ( !trait_exists('Companion_Options') ){
 			$default_options['weather'] = 0;
 			$default_options['advanced_form_identification'] = 0;
 			$default_options['ga_load_abandon'] = 0;
-			$default_options['prototype_mode'] = 0;
-			$default_options['wireframe_theme'] = '';
 			$default_options['staging_theme'] = '';
 			$default_options['production_theme'] = '';
 			$default_options['check_tor'] = 0;
@@ -76,7 +74,6 @@ if ( !trait_exists('Companion_Options') ){
 			$current_screen = get_current_screen();
 			if ( $current_screen->base === 'appearance_page_nebula_options' ){
 				add_meta_box('nebula_companion_detection_metabox', 'Advanced Detection', array($this, 'nebula_companion_detection_metabox'), 'nebula_options', 'functions_side');
-				add_meta_box('nebula_companion_prototyping_metabox', 'Prototyping', array($this, 'nebula_companion_prototyping_metabox'), 'nebula_options', 'advanced');
 			}
 		}
 
@@ -158,57 +155,6 @@ if ( !trait_exists('Companion_Options') ){
 					<p class="nebula-help-text short-help form-text text-muted">A list of named IP addresses. Enter each IP (or RegEx to match) on a new line with a space separating the IP address and name.</p>
 					<p class="nebula-help-text more-help form-text text-muted">Name IPs by location to avoid <a href="https://support.google.com/analytics/answer/2795983" target="_blank" rel="noopener">Personally Identifiable Information (PII)</a> issues (Do not use peoples' names). Be sure to set up a Custom Dimension in Google Analytics and add the dimension index in the Analytics tab!<br />Tip: IP data can be sent with <a href="https://nebula.gearside.com/examples/contact-form-7/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=notable+ips+help<?php echo nebula()->get_user_info('user_email', array('prepend' => '&nv-email=')); ?>" target="_blank" rel="noopener">Nebula contact forms</a>!</p>
 					<p class="option-keywords">recommended</p>
-				</div>
-			<?php
-		}
-
-		public function nebula_companion_prototyping_metabox($nebula_options){
-			$themes = wp_get_themes();
-			?>
-				<div class="form-group">
-					<input type="checkbox" name="nebula_options[prototype_mode]" id="prototype_mode" value="1" <?php checked('1', !empty($nebula_options['prototype_mode'])); ?> /><label for="prototype_mode">Prototype Mode</label>
-					<p class="nebula-help-text short-help form-text text-muted">When prototyping, enable this setting. (Default: <?php echo nebula()->user_friendly_default('prototype_mode'); ?>)</p>
-					<p class="nebula-help-text more-help form-text text-muted">Use the wireframe theme and production theme settings to develop the site while referencing the prototype. Use the staging theme to edit the site or develop new features while the site is live. If the staging theme is the active theme, use the Advanced Setting dropdown for "Theme For Everything" and choose a theme there for general visitors (Note: If using this setting, you may need to select that same theme for the admin-ajax option too!).</p>
-					<p class="option-keywords">companion</p>
-				</div>
-
-				<div class="form-group" dependent-of="prototype_mode">
-					<label for="wireframe_theme">Wireframe Theme</label>
-					<select name="nebula_options[wireframe_theme]" id="wireframe_theme" class="form-control nebula-validate-select">
-						<option value="" <?php selected('', $nebula_options['wireframe_theme']); ?>>None</option>
-                        <?php foreach ( $themes as $key => $value ): ?>
-                            <option value="<?php echo $key; ?>" <?php selected($key, $nebula_options['wireframe_theme']); ?>><?php echo $value->get('Name') . ' (' . $key . ')'; ?></option>
-                        <?php endforeach; ?>
-					</select>
-					<p class="nebula-help-text short-help form-text text-muted">The theme to use as the wireframe. Viewing this theme will trigger a greyscale view.</p>
-					<p class="dependent-note hidden">This option is dependent on Prototype Mode.</p>
-					<p class="option-keywords">companion</p>
-				</div>
-
-				<div class="form-group" dependent-of="prototype_mode">
-					<label for="staging_theme">Staging Theme</label>
-					<select name="nebula_options[staging_theme]" id="staging_theme" class="form-control nebula-validate-select">
-						<option value="" <?php selected('', $nebula_options['staging_theme']); ?>>None</option>
-                        <?php foreach ( $themes as $key => $value ): ?>
-                            <option value="<?php echo $key; ?>" <?php selected($key, $nebula_options['staging_theme']); ?>><?php echo $value->get('Name') . ' (' . $key . ')'; ?></option>
-                        <?php endforeach; ?>
-					</select>
-					<p class="nebula-help-text short-help form-text text-muted">The theme to use for staging new features. This is useful for site development after launch.</p>
-					<p class="dependent-note hidden">This option is dependent on Prototype Mode.</p>
-					<p class="option-keywords">companion</p>
-				</div>
-
-				<div class="form-group" dependent-of="prototype_mode">
-					<label for="production_theme">Production (Live) Theme</label>
-					<select name="nebula_options[production_theme]" id="production_theme" class="form-control nebula-validate-select">
-						<option value="" <?php selected('', $nebula_options['production_theme']); ?>>None</option>
-                        <?php foreach ( $themes as $key => $value ): ?>
-                            <option value="<?php echo $key; ?>" <?php selected($key, $nebula_options['production_theme']); ?>><?php echo $value->get('Name') . ' (' . $key . ')'; ?></option>
-                        <?php endforeach; ?>
-					</select>
-					<p class="nebula-help-text short-help form-text text-muted">The theme to use for production/live. This theme will become the live site.</p>
-					<p class="dependent-note hidden">This option is dependent on Prototype Mode.</p>
-					<p class="option-keywords">companion</p>
 				</div>
 			<?php
 		}

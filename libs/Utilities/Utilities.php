@@ -11,7 +11,6 @@ if ( !trait_exists('Companion_Utilities') ){
 		public function hooks(){
 			$this->Companion_SassHooks(); //Register Sass hooks
 
-			add_filter('nebula_session_id', array($this, 'add_session_id_parameter'));
 			//$this->Companion_DeviceHooks(); //Register Device hooks
 			add_action('wp_footer', array($this, 'visualize_scroll_percent'));
 
@@ -79,15 +78,6 @@ if ( !trait_exists('Companion_Utilities') ){
 
 
 
-		}
-
-		public function add_session_id_parameter($session_data){
-			//Prototype Mode
-			if ( nebula()->get_option('prototype_mode') ){
-				$session_data['p'] = true;
-			}
-
-			return $session_data;
 		}
 
 		//Detect Notable POI

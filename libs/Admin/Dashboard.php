@@ -8,10 +8,6 @@ if ( !trait_exists('Companion_Dashboard') ){
 			if ( current_user_can('edit_others_posts') ){
 				add_action('wp_dashboard_setup', array($this, 'github_metabox'));
 			}
-
-			add_action('nebula_dev_dashboard_directories', array($this, 'more_directory_sizes'));
-			add_filter('nebula_directory_search_options', array($this, 'search_prototype_directories'));
-			add_filter('nebula_search_directories', array($this, 'add_prototyping_search_directories'));
 		}
 
 		//Add a Github metabox for recently updated issues
@@ -124,55 +120,6 @@ if ( !trait_exists('Companion_Dashboard') ){
 			echo '<p><small><a href="' . nebula()->get_option('github_url') . '/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc" target="_blank">View all issues &raquo;</a></small></p>';
 			echo '</div></div>';
 			nebula()->timer('Nebula Companion Github Dashboard', 'end');
-		}
-
-		public function more_directory_sizes(){
-			if ( nebula()->get_option('prototype_mode') ){
-				if ( nebula()->get_option('wireframe_theme') ){
-					$nebula_wireframe_size = nebula()->foldersize(get_theme_root() . '/' . nebula()->get_option('wireframe_theme'));
-					echo '<li title="' . nebula()->get_option('wireframe_theme') . '"><i class="fas fa-flag"></i> Wireframe directory size: <strong>' . round($nebula_wireframe_size/1048576, 2) . 'mb</strong> </li>';
-				}
-
-				if ( nebula()->get_option('staging_theme') ){
-					$nebula_staging_size = nebula()->foldersize(get_theme_root() . '/' . nebula()->get_option('staging_theme'));
-					echo '<li title="' . nebula()->get_option('staging_theme') . '"><i class="fas fa-flag"></i> Staging directory size: <strong>' . round($nebula_staging_size/1048576, 2) . 'mb</strong> </li>';
-				}
-			}
-		}
-
-		public function search_prototype_directories($directory_search_options){
-			//Add prototype themes to directory search options
-			if ( nebula()->get_option('prototype_mode') ){
-				unset($directory_search_options['child']);
-				unset($directory_search_options['theme']);
-
-				$directory_search_options['production'] = '<option value="production">Production</option>';
-
-				if ( nebula()->get_option('staging_theme') ){
-					$directory_search_options['staging'] = '<option value="staging">Staging</option>';
-				}
-
-				if ( nebula()->get_option('wireframe_theme') ){
-					$directory_search_options['wireframe'] = '<option value="wireframe">Wireframe</option>';
-				}
-			}
-
-			return $directory_search_options;
-		}
-
-		public function add_prototyping_search_directories($search_directories){
-			//Add prototype themes to directory search
-			if ( nebula()->get_option('prototype_mode') ){
-				$search_directories['wireframe'] = get_theme_root() . '/' . nebula()->get_option('wireframe_theme');
-				$search_directories['staging'] = get_theme_root() . '/' . nebula()->get_option('staging_theme');
-				if ( $this->get_option('production_theme') ){
-					$search_directories['production'] = get_theme_root() . '/' . nebula()->get_option('production_theme');
-				} else {
-					$search_directories['production'] = get_stylesheet_directory();
-				}
-			}
-
-			return $search_directories;
 		}
 	}
 }
