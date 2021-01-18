@@ -1,6 +1,7 @@
 {
 	"name": "Nebula Companion",
 	"version": "8.7.7.5968",
+	"details_url": "https://github.com/chrisblakley/Nebula-Companion/commits/main",
 	"download_url": "https://github.com/chrisblakley/Nebula-Companion/archive/main.zip",
 	"homepage": "https://nebula.gearside.com/?utm_campaign=nebula+companion+plugin&utm_source=wordpress&utm_medium=wordpress&utm_content=plugin+update+details",
 	"last_updated": "2020-12-07 00:00:00",
