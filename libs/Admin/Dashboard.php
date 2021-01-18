@@ -10,7 +10,7 @@ if ( !trait_exists('Companion_Dashboard') ){
 			}
 		}
 
-		//Add a Github metabox for recently updated issues
+		//Add a GitHub metabox for recently updated issues
 		public function github_metabox(){
 			if ( nebula()->get_option('github_url') ){
 				$repo_name = str_replace('https://github.com/', '', nebula()->get_option('github_url'));
@@ -20,7 +20,7 @@ if ( !trait_exists('Companion_Dashboard') ){
 		}
 
 		public function dashboard_nebula_github(){
-			nebula()->timer('Nebula Companion Github Dashboard');
+			nebula()->timer('Nebula Companion GitHub Dashboard');
 
 			$client_id = ''; //@todo: get this from Advanced nebula options
 			$client_secret = ''; //@todo: get this from Advanced nebula options
@@ -31,7 +31,7 @@ if ( !trait_exists('Companion_Dashboard') ){
 				), $url);
 			}
 
-			echo '<p><a href="' . nebula()->get_option('github_url') . '" target="_blank">Github Repository &raquo;</a></p>';
+			echo '<p><a href="' . nebula()->get_option('github_url') . '" target="_blank">GitHub Repository &raquo;</a></p>';
 
 			$repo_name = str_replace('https://github.com/', '', nebula()->get_option('github_url'));
 
@@ -40,7 +40,7 @@ if ( !trait_exists('Companion_Dashboard') ){
 			if ( empty($github_commit_json) || nebula()->is_debug() ){
 				$response = nebula()->remote_get('https://api.github.com/repos/' . $repo_name . '/commits');
 				if ( is_wp_error($response) ){
-			        echo '<p>There was an error retrieving the Github commits...</p>';
+			        echo '<p>There was an error retrieving the GitHub commits...</p>';
 			        return false;
 			    }
 
@@ -54,7 +54,7 @@ if ( !trait_exists('Companion_Dashboard') ){
 				?>
 					<p>
 						<strong>This repo is not available.</strong><br />
-						If this is a private repo, the <strong>Client ID</strong> and <strong>Client Secret</strong> from your Github app must be added in <a href="themes.php?page=nebula_options&tab=functions&option=comments">Nebula Options</a> to retrieve issues.
+						If this is a private repo, the <strong>Client ID</strong> and <strong>Client Secret</strong> from your GitHub app must be added in <a href="themes.php?page=nebula_options&tab=functions&option=comments">Nebula Options</a> to retrieve issues.
 					</p>
 					<p>
 						<a href="<?php echo nebula()->get_option('github_url'); ?>/commits/main" target="_blank">Commits &raquo;</a><br />
@@ -88,7 +88,7 @@ if ( !trait_exists('Companion_Dashboard') ){
 			if ( empty($github_issues_json) || nebula()->is_debug() ){
 				$response = nebula()->remote_get('https://api.github.com/repos/' . $repo_name . '/issues?sort=updated');
 				if ( is_wp_error($response) ){
-			        echo '<p>There was an error retrieving the Github issues...</p>';
+			        echo '<p>There was an error retrieving the GitHub issues...</p>';
 			        return false;
 			    }
 
@@ -119,7 +119,7 @@ if ( !trait_exists('Companion_Dashboard') ){
 
 			echo '<p><small><a href="' . nebula()->get_option('github_url') . '/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc" target="_blank">View all issues &raquo;</a></small></p>';
 			echo '</div></div>';
-			nebula()->timer('Nebula Companion Github Dashboard', 'end');
+			nebula()->timer('Nebula Companion GitHub Dashboard', 'end');
 		}
 	}
 }
