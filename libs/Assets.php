@@ -2,8 +2,8 @@
 
 if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
-if ( !trait_exists('Companion_Scripts') ){
-	trait Companion_Scripts {
+if ( !trait_exists('Companion_Assets') ){
+	trait Companion_Assets {
 		public function hooks(){
 			//Register styles/scripts
 			add_action('wp_enqueue_scripts', array($this, 'register_scripts'));
@@ -27,7 +27,7 @@ if ( !trait_exists('Companion_Scripts') ){
 			//wp_register_style('nebula-companion-admin', $this->plugin_directory_uri . 'assets/css/admin.css', null, nebula()->version('full'), 'all'); //This file is empty...
 			wp_register_style('nebula-companion-flags', $this->plugin_directory_uri . 'assets/css/flags.css', null, nebula()->version('full'), 'all');
 
-			nebula()->register_script('nebula-companion', $this->plugin_directory_uri . 'assets/js/companion.js', array('defer'), array('jquery-core', 'nebula-nebula'), nebula()->version('full'), true); //nebula.js (in the parent Nebula theme) is defined as a dependant here.
+			nebula()->register_script('nebula-companion', $this->plugin_directory_uri . 'assets/js/companion.js', array('defer', 'module'), array('jquery-core', 'nebula-nebula'), nebula()->version('full'), true); //nebula.js (in the parent Nebula theme) is defined as a dependant here.
 		}
 
 		//Enqueue frontend scripts
@@ -58,7 +58,6 @@ if ( !trait_exists('Companion_Scripts') ){
 
 		public function companion_brain($brain){
 			$brain['site']['options']['advanced_form_identification'] = nebula()->get_option('advanced_form_identification');
-
 			return $brain; //Always return on a filter or else it will break
 		}
 	}

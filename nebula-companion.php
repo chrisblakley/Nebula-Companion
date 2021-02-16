@@ -3,7 +3,7 @@
 Plugin Name: Nebula Companion
 Plugin URI: https://nebula.gearside.com/
 Description: Advanced features for use with the Nebula theme.
-Version: 8.8.18.108
+Version: 8.9.16.3626
 Author: Chris Blakley
 Author URI: https://nebula.gearside.com
 */
@@ -18,14 +18,14 @@ if ( $active_theme->get('Template') == 'Nebula-main' || $active_theme->get('Temp
 
 if ( !class_exists('Nebula_Companion') ){
 	//Require Nebula libraries
-	require_once plugin_dir_path(__FILE__) . 'libs/Scripts.php';
+	require_once plugin_dir_path(__FILE__) . 'libs/Assets.php';
 	require_once plugin_dir_path(__FILE__) . 'libs/Options/Options.php';
 	require_once plugin_dir_path(__FILE__) . 'libs/Utilities/Utilities.php';
 	require_once plugin_dir_path(__FILE__) . 'libs/Functions.php';
 	require_once plugin_dir_path(__FILE__) . 'libs/Admin/Admin.php';
 
 	class Nebula_Companion {
-		use Companion_Scripts { Companion_Scripts::hooks as Companion_ScriptHooks; }
+		use Companion_Assets { Companion_Assets::hooks as Companion_AssetsHooks; }
 		use Companion_Options { Companion_Options::hooks as Companion_OptionsHooks; }
 		use Companion_Utilities { Companion_Utilities::hooks as Companion_UtilitiesHooks; }
 		use Companion_Functions { Companion_Functions::hooks as Companion_FunctionsHooks; }
@@ -59,7 +59,7 @@ if ( !class_exists('Nebula_Companion') ){
 
 		//Run action and filter hooks
 		private function hooks(){
-			$this->Companion_ScriptHooks(); //Register Scripts hooks
+			$this->Companion_AssetsHooks(); //Register Assets hooks
 			$this->Companion_OptionsHooks(); //Register Options hooks
 			$this->Companion_UtilitiesHooks(); //Register Utilities hooks
 			$this->Companion_FunctionsHooks(); //Register Functions hooks

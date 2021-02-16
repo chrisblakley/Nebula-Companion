@@ -10,7 +10,7 @@ if ( !trait_exists('Companion_Dashboard') ){
 			}
 		}
 
-		//Add a GitHub metabox for recently updated issues
+		//Add a GitHub metabox for recently updated issues/discussions
 		public function github_metabox(){
 			if ( nebula()->get_option('github_url') ){
 				$repo_name = str_replace('https://github.com/', '', nebula()->get_option('github_url'));
@@ -80,44 +80,61 @@ if ( !trait_exists('Companion_Dashboard') ){
 			echo '<p><small><a href="' . nebula()->get_option('github_url') . '/commits/main" target="_blank">View all commits &raquo;</a></small></p>';
 			echo '</div>';
 
-			//Issues
+			//Issues and Discussions
 			echo '<div class="nebula-metabox-col">';
-			echo '<strong>Recently Updated Issues</strong><br />';
+			echo '<strong>Recent Issues &amp; Discussions</strong><br />';
 
-			$github_issues_json = get_transient('nebula_github_issues');
-			if ( empty($github_issues_json) || nebula()->is_debug() ){
-				$response = nebula()->remote_get('https://api.github.com/repos/' . $repo_name . '/issues?sort=updated');
-				if ( is_wp_error($response) ){
+
+			$github_combined_posts = get_transient('nebula_github_posts');
+			if ( 1==1 || empty($github_combined_posts) || nebula()->is_debug() ){
+				//Get the Issues first https://developer.github.com/v3/issues/
+				$issues_response = nebula()->remote_get('https://api.github.com/repos/' . $repo_name . '/issues?sort=updated');
+				if ( is_wp_error($issues_response) ){
 			        echo '<p>There was an error retrieving the GitHub issues...</p>';
 			        return false;
 			    }
 
-			    $github_issues_json = $response['body'];
-				set_transient('nebula_github_issues', $github_issues_json, MINUTE_IN_SECONDS*30); //30 minute expiration
+			    $github_issues_json = json_decode($issues_response['body']);
+
+				//Get the Discussions next
+				//GraphQL API is available, but webhooks not ready yet per (Feb 2021): https://github.com/github/feedback/discussions/43
+// 				$discussions_response = nebula()->remote_get('https://api.github.com/repos/' . $repo_name . '/discussions?sort=updated');
+// 				if ( is_wp_error($discussions_response) ){
+// 					$discussions_response = array('body' => '{}'); //Ignore discussions errors
+// 				}
+//
+// 				$github_discussions_json = json_decode($discussions_response['body']);
+
+
+				//Then combine the issues and discussions by most recent first
+				$github_combined_posts = json_encode($github_issues_json); //Replace this when discussions api is available
+
+				set_transient('nebula_github_posts', $github_combined_posts, MINUTE_IN_SECONDS*30); //30 minute expiration
 			}
 
-			$issues = json_decode($github_issues_json);
+			$github_combined_posts = json_decode($github_combined_posts);
 
-			//https://developer.github.com/v3/issues/
-			if ( !empty($issues) ){
+			if ( !empty($github_combined_posts) ){
+				$github_post_type = ( strpos($github_combined_posts[$i]->html_url, 'issue') > 0 )? 'Issue' : 'Discussion';
+
 				echo '<ul>';
 				for ( $i=0; $i <= 2; $i++ ){ //Get 3 issues
-					$issue_date_time = strtotime($issues[$i]->updated_at);
-					$issue_date_icon = ( date('Y-m-d', $issue_date_time) === date('Y-m-d') )? 'fa-clock' : 'fa-calendar';
+					$github_post_date_time = strtotime($github_combined_posts[$i]->updated_at);
+					$github_post_date_icon = ( date('Y-m-d', $github_post_date_time) === date('Y-m-d') )? 'fa-clock' : 'fa-calendar';
 
 					echo '<li>
 						<p>
-							<a href="' . $issues[$i]->html_url . '" target="_blank">' . htmlentities($issues[$i]->title) . '</a><br />
-							<small><i class="far fa-fw ' . $issue_date_icon . '"></i> <span title="' . date('F j, Y @ g:ia', $issue_date_time) . '">' . human_time_diff($issue_date_time) . ' ago</span></small>
+							<a href="' . $github_combined_posts[$i]->html_url . '" target="_blank">' . htmlentities($github_combined_posts[$i]->title) . '</a><br />
+							<small><i class="far fa-fw ' . $github_post_date_icon . '"></i> <span title="' . date('F j, Y @ g:ia', $github_post_date_time) . '">' . $github_post_type . ' updated ' . human_time_diff($github_post_date_time) . ' ago</span></small>
 						</p>
 					</li>';
 				}
 				echo '</ul>';
 			} else {
-				echo '<p>No issues found.</p>';
+				echo '<p>No issues or discussions found.</p>';
 			}
 
-			echo '<p><small><a href="' . nebula()->get_option('github_url') . '/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc" target="_blank">View all issues &raquo;</a></small></p>';
+			echo '<p><small>View all <a href="' . nebula()->get_option('github_url') . '/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc" target="_blank">issues</a> or <a href="' . nebula()->get_option('github_url') . '/issues?q=is%3Adiscussions" target="_blank">discussions</a></small></p>';
 			echo '</div></div>';
 			nebula()->timer('Nebula Companion GitHub Dashboard', 'end');
 		}
