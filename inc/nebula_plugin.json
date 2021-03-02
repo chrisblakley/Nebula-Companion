@@ -1,22 +1,20 @@
 {
 	"name": "Nebula Companion",
-	"version": "8.9.16.3625",
+	"version": "8.10.1.837",
 	"details_url": "https://github.com/chrisblakley/Nebula-Companion/commits/main",
 	"download_url": "https://github.com/chrisblakley/Nebula-Companion/archive/main.zip",
 	"homepage": "https://nebula.gearside.com/?utm_campaign=nebula+companion+plugin&utm_source=wordpress&utm_medium=wordpress&utm_content=plugin+update+details",
-	"last_updated": "2021-02-16 00:00:00",
-	"upgrade_notice": "Unable to retrieve the commit message.",
+	"last_updated": "2021-03-01 00:00:00",
 	"author": "Chris Blakley",
 	"author_homepage": "https://gearside.com/?utm_campaign=nebula+companion+plugin&utm_source=wordpress&utm_medium=wordpress&utm_content=plugin+update+details",
 	"sections": {
 		"description": "<p>A plugin with more niche functionality for the Nebula WordPress theme framework.</p><p><a href='https://github.com/chrisblakley/Nebula/' target='_blank'>Nebula theme on GitHub &raquo;</a></p><p><a href='https://nebula.gearside.com/?utm_campaign=nebula+companion+plugin&utm_source=wordpress&utm_medium=wordpress&utm_content=plugin+update+details' target='_blank'>Nebula theme documentation &raquo;</a></p><p><a href='https://github.com/chrisblakley/Nebula-Companion/commits/main' target='_blank'>Nebula Companion plugin on GitHub &raquo;</a></p>",
-		"installation": "Upload to the WordPress plugins directory and activate. This only runs when the Nebula theme is active.",
-		"changelog": "<p><strong>Latest Change:</strong><br>Unable to retrieve the commit message.<br /><a href='https://github.com/chrisblakley/Nebula-Companion/commits/main' target='_blank'>See changes &raquo;</a></p><p><a href='https://github.com/chrisblakley/Nebula-Companion/commits/main' target='_blank'>See full changelog here &raquo;</a></p>"
+		"installation": "Upload to the WordPress plugins directory and activate. This only runs when the Nebula theme is active."
 	},
 	"icons" : {
 		"1x" : "https://raw.githubusercontent.com/chrisblakley/Nebula-Companion/main/assets/img/icon-128x128.png",
 		"2x" : "https://raw.githubusercontent.com/chrisblakley/Nebula-Companion/main/assets/img/icon-256x256.png"
-    },
+	},
 	"banners": {
 		"low": "https://raw.githubusercontent.com/chrisblakley/Nebula-Companion/main/assets/img/banner-772x250.png",
 		"high": "https://raw.githubusercontent.com/chrisblakley/Nebula-Companion/main/assets/img/banner-1544x500.png"

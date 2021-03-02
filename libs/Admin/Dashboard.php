@@ -12,7 +12,7 @@ if ( !trait_exists('Companion_Dashboard') ){
 
 		//Add a GitHub metabox for recently updated issues/discussions
 		public function github_metabox(){
-			if ( nebula()->get_option('github_url') ){
+			if ( nebula()->get_option('github_url') && nebula()->get_option('github_pat') ){
 				$repo_name = str_replace('https://github.com/', '', nebula()->get_option('github_url'));
 				global $wp_meta_boxes;
 				wp_add_dashboard_widget('nebula_github', '<i class="fab fa-fw fa-github"></i>&nbsp;' . $repo_name, array($this, 'dashboard_nebula_github'));
@@ -21,30 +21,26 @@ if ( !trait_exists('Companion_Dashboard') ){
 
 		public function dashboard_nebula_github(){
 			nebula()->timer('Nebula Companion GitHub Dashboard');
-
-			$client_id = ''; //@todo: get this from Advanced nebula options
-			$client_secret = ''; //@todo: get this from Advanced nebula options
-			if ( !empty($client_id) && !empty($client_secret) ){
-				$url = add_query_arg(array(
-					'client_id' => $client_id,
-					'client_secret' => $client_secret
-				), $url);
-			}
-
 			echo '<p><a href="' . nebula()->get_option('github_url') . '" target="_blank">GitHub Repository &raquo;</a></p>';
 
 			$repo_name = str_replace('https://github.com/', '', nebula()->get_option('github_url'));
+			$github_personal_access_token = nebula()->get_option('github_pat');
 
 			//Commits
 			$github_commit_json = get_transient('nebula_github_commits');
 			if ( empty($github_commit_json) || nebula()->is_debug() ){
-				$response = nebula()->remote_get('https://api.github.com/repos/' . $repo_name . '/commits');
-				if ( is_wp_error($response) ){
+				$commits_response = nebula()->remote_get('https://api.github.com/repos/' . $repo_name . '/commits', array(
+					'headers' => array(
+						'Authorization' => 'token ' . $github_personal_access_token,
+					)
+				));
+
+				if ( is_wp_error($commits_response) ){
 			        echo '<p>There was an error retrieving the GitHub commits...</p>';
 			        return false;
 			    }
 
-			    $github_commit_json = $response['body'];
+			    $github_commit_json = $commits_response['body'];
 				set_transient('nebula_github_commits', $github_commit_json, HOUR_IN_SECONDS*3); //3 hour expiration
 			}
 
@@ -84,11 +80,16 @@ if ( !trait_exists('Companion_Dashboard') ){
 			echo '<div class="nebula-metabox-col">';
 			echo '<strong>Recent Issues &amp; Discussions</strong><br />';
 
-
 			$github_combined_posts = get_transient('nebula_github_posts');
-			if ( 1==1 || empty($github_combined_posts) || nebula()->is_debug() ){
+			if ( empty($github_combined_posts) || nebula()->is_debug() ){
 				//Get the Issues first https://developer.github.com/v3/issues/
-				$issues_response = nebula()->remote_get('https://api.github.com/repos/' . $repo_name . '/issues?sort=updated');
+				//Note: The Issues endpoint also returns pull requests (which is fine because we want that)
+				$issues_response = nebula()->remote_get('https://api.github.com/repos/' . $repo_name . '/issues?state=open&sort=updated&direction=desc&per_page=3', array(
+					'headers' => array(
+						'Authorization' => 'token ' . $github_personal_access_token,
+					)
+				));
+
 				if ( is_wp_error($issues_response) ){
 			        echo '<p>There was an error retrieving the GitHub issues...</p>';
 			        return false;
@@ -98,12 +99,17 @@ if ( !trait_exists('Companion_Dashboard') ){
 
 				//Get the Discussions next
 				//GraphQL API is available, but webhooks not ready yet per (Feb 2021): https://github.com/github/feedback/discussions/43
-// 				$discussions_response = nebula()->remote_get('https://api.github.com/repos/' . $repo_name . '/discussions?sort=updated');
-// 				if ( is_wp_error($discussions_response) ){
-// 					$discussions_response = array('body' => '{}'); //Ignore discussions errors
-// 				}
-//
-// 				$github_discussions_json = json_decode($discussions_response['body']);
+				// $discussions_response = nebula()->remote_get('https://api.github.com/repos/' . $repo_name . '/discussions?sort=updated&direction=desc&per_page=3', array(
+				// 	'headers' => array(
+				// 		'Authorization' => 'token ' . $github_personal_access_token,
+				// 	)
+				// ));
+
+				//if ( is_wp_error($discussions_response) ){
+					$discussions_response = array('body' => '{}'); //Ignore discussions errors
+				//}
+
+				$github_discussions_json = json_decode($discussions_response['body']);
 
 
 				//Then combine the issues and discussions by most recent first
@@ -115,10 +121,17 @@ if ( !trait_exists('Companion_Dashboard') ){
 			$github_combined_posts = json_decode($github_combined_posts);
 
 			if ( !empty($github_combined_posts) ){
-				$github_post_type = ( strpos($github_combined_posts[$i]->html_url, 'issue') > 0 )? 'Issue' : 'Discussion';
-
 				echo '<ul>';
 				for ( $i=0; $i <= 2; $i++ ){ //Get 3 issues
+					$github_post_type = 'Unknown';
+					if ( strpos($github_combined_posts[$i]->html_url, 'issue') > 0 ){
+						$github_post_type = 'Issue';
+					} elseif ( strpos($github_combined_posts[$i]->html_url, 'pull') > 0 ){
+						$github_post_type = 'Pull Request';
+					} elseif ( strpos($github_combined_posts[$i]->html_url, 'discussion') > 0 ){
+						$github_post_type = 'Discussion';
+					}
+
 					$github_post_date_time = strtotime($github_combined_posts[$i]->updated_at);
 					$github_post_date_icon = ( date('Y-m-d', $github_post_date_time) === date('Y-m-d') )? 'fa-clock' : 'fa-calendar';
 
@@ -134,7 +147,7 @@ if ( !trait_exists('Companion_Dashboard') ){
 				echo '<p>No issues or discussions found.</p>';
 			}
 
-			echo '<p><small>View all <a href="' . nebula()->get_option('github_url') . '/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc" target="_blank">issues</a> or <a href="' . nebula()->get_option('github_url') . '/issues?q=is%3Adiscussions" target="_blank">discussions</a></small></p>';
+			echo '<p><small>View all <a href="' . nebula()->get_option('github_url') . '/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc" target="_blank">issues</a>, <a href="' . nebula()->get_option('github_url') . '/pulls?q=is%3Apr+is%3Aopen+sort%3Aupdated-desc" target="_blank">pull requests</a>, or <a href="' . nebula()->get_option('github_url') . '/discussions" target="_blank">discussions &raquo;</a></small></p>';
 			echo '</div></div>';
 			nebula()->timer('Nebula Companion GitHub Dashboard', 'end');
 		}

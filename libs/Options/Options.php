@@ -31,6 +31,7 @@ if ( !trait_exists('Companion_Options') ){
 			$default_options['plugin_update_notification'] = 1;
 			$default_options['cd_notablepoi'] = '';
 			$default_options['notableiplist'] = '';
+			$default_options['github_pat'] = '';
 
 			return $default_options;
 		}
@@ -84,6 +85,13 @@ if ( !trait_exists('Companion_Options') ){
 					<input type="text" name="nebula_options[ip_geo_api]" id="ip_geo_api" class="form-control" value="<?php echo $nebula_options['ip_geo_api']; ?>" />
 					<p class="nebula-help-text short-help form-text text-muted">Lookup the country, region, and city of the user based on their IP address by entering your API key from <a href="https://ipstack.com/signup/free" target="_blank">IP Stack</a>.</p>
 					<p class="option-keywords">location remote resource moderate page speed impact companion</p>
+				</div>
+
+				<div class="form-group">
+					<label for="github_pat">GitHub Personal Access Token</label>
+					<input type="text" name="nebula_options[github_pat]" id="github_pat" class="form-control" placeholder="0000000000000000000000000000000000000000" value="<?php echo $nebula_options['github_pat']; ?>" />
+					<p class="nebula-help-text short-help form-text text-muted"><a href="https://github.com/settings/tokens/new" target="_blank">Generate a Personal Access Token</a> to retrieve Issues and commits on the WordPress Dashboard <a href="https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token" target="_blank">(GitHub instructions here)</a>. Nebula only needs basic repo and read discussion scopes.</p>
+					<p class="option-keywords">github api pat personal access token issues commits discussions metabox</p>
 				</div>
 			<?php
 		}
