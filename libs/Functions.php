@@ -6,9 +6,11 @@ trait Companion_Functions {
 	public function hooks(){
 		global $pagenow;
 
-		add_action('nebula_ga_before_send_pageview', array($this, 'poi_custom_dimension'));
-		add_filter('nebula_hubspot_identify', array($this, 'poi_hubspot'), 10, 1);
-		add_filter('nebula_cf7_debug_data', array($this, 'poi_cf7_debug_info'), 10, 1);
+		if ( !nebula()->is_background_request() ){
+			add_action('nebula_ga_before_send_pageview', array($this, 'poi_custom_dimension'));
+			add_filter('nebula_hubspot_identify', array($this, 'poi_hubspot'), 10, 1);
+			add_filter('nebula_cf7_debug_data', array($this, 'poi_cf7_debug_info'), 10, 1);
+		}
 	}
 
 	public function poi_custom_dimension(){

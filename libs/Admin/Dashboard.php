@@ -5,7 +5,7 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Companion_Dashboard') ){
 	trait Companion_Dashboard {
 		public function hooks(){
-			if ( current_user_can('edit_others_posts') ){
+			if ( current_user_can('edit_others_posts') && !nebula()->is_background_request() ){
 				add_action('wp_dashboard_setup', array($this, 'github_metabox'));
 			}
 		}
@@ -78,7 +78,7 @@ if ( !trait_exists('Companion_Dashboard') ){
 
 			//Issues and Discussions
 			echo '<div class="nebula-metabox-col">';
-			echo '<strong>Recent Issues &amp; Discussions</strong><br />';
+			echo '<strong>Recent Issues, Pull Requests, &amp; Discussions</strong><br />';
 
 			$github_combined_posts = get_transient('nebula_github_posts');
 			if ( empty($github_combined_posts) || nebula()->is_debug() ){

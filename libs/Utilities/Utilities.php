@@ -333,6 +333,5 @@ if ( !trait_exists('Companion_Utilities') ){
 				}
 			}
 		}
-
 	}
 }
