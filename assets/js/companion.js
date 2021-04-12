@@ -13,8 +13,9 @@ import './modules/analytics.js';
  DOM Ready (After nebula.js is loaded)
  ===========================*/
 
-jQuery(function(){
-	nebula.cacheSelectors();
+jQuery(async function(){
+    await import(nebula.site.directory.template.uri + '/assets/js/modules/optimization.js'); //Await parent theme module
+    nebula.cacheSelectors();
 });
 
 /*==========================

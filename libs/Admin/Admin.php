@@ -15,9 +15,9 @@ if ( !trait_exists('Companion_Admin') ){
 				$this->Companion_DashboardHooks(); //Register Dashboard hooks
 				add_action('admin_init', array($this, 'plugin_json'));
 
-				add_filter('manage_users_columns', array($this, 'user_columns_head'));
-				add_action('manage_users_custom_column', array($this, 'user_columns_content' ), 15, 3);
-				add_filter('nebula_user_column_ip', array($this, 'user_ip_poi'), 10, 1);
+				add_filter('manage_users_columns', array($this, 'companion_user_columns_head'));
+				add_action('manage_users_custom_column', array($this, 'companion_user_columns_content' ), 15, 3);
+				//add_filter('nebula_user_column_ip', array($this, 'user_ip_poi'), 10, 1);
 
 			} else { //Front-end for admin users
 				//Do stuff here
@@ -51,13 +51,13 @@ if ( !trait_exists('Companion_Admin') ){
 		}
 
 		//Add columns to user listings
-		public function user_columns_head($columns){
+		public function companion_user_columns_head($columns){
 			$columns['ip'] = 'Last IP';
 			return $columns;
 		}
 
 		//Custom columns content to user listings
-		public function user_columns_content($value='', $column_name, $id){
+		public function companion_user_columns_content($value, $column_name, $id){
 			if ( $column_name === 'ip' ){
 				$logged_in_users = nebula()->get_data('users_status');
 
@@ -71,6 +71,8 @@ if ( !trait_exists('Companion_Admin') ){
 
 				return '';
 			}
+
+			return $value; //Always return the default value to prevent conflicts with other column data!
 		}
 
 		//Append the POI of an IP address in the user column
